@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\VSC\\PIN\\src\\Pin.DartsTournament.Blazor\\Pin.DartsTournament.Blazor.csproj",
-      "projectName": "Pin.DartsTournament.Blazor",
-      "projectPath": "D:\\VSC\\PIN\\src\\Pin.DartsTournament.Blazor\\Pin.DartsTournament.Blazor.csproj",
+      "projectUniqueName": "D:\\VSC\\PIN\\src\\Pin.DartsTournament.Core\\Pin.DartsTournament.Core.csproj",
+      "projectName": "Pin.DartsTournament.Core",
+      "projectPath": "D:\\VSC\\PIN\\src\\Pin.DartsTournament.Core\\Pin.DartsTournament.Core.csproj",
       "packagesPath": "C:\\Users\\bigma\\.nuget\\packages\\",
-      "outputPath": "D:\\VSC\\PIN\\src\\Pin.DartsTournament.Blazor\\obj\\",
+      "outputPath": "D:\\VSC\\PIN\\src\\Pin.DartsTournament.Core\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -61,9 +61,6 @@
         "assetTargetFallback": true,
         "warn": true,
         "frameworkReferences": {
-          "Microsoft.AspNetCore.App": {
-            "privateAssets": "none"
-          },
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
