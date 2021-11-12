@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "90179eb8-c2ac-4242-b5a1-1aa32a40f7b6": {
+      "ProjectGuid": "90179eb8-c2ac-4242-b5a1-1aa32a40f7b6",
+      "DisplayName": "Pin.DartsTournament.Blazor",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
