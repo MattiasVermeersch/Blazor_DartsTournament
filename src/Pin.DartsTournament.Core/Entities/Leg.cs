@@ -4,6 +4,6 @@
     {
         public int Score { get; set; }
         public Player Player { get; set; }
-        public IEnumerable<Dart> Throws { get; set; }
+        public ICollection<Throw> Throws { get; set; }
     }
 }
