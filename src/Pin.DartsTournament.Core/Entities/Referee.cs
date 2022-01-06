@@ -3,7 +3,6 @@
     public class Referee : EntityBase 
     {
         public string Name { get; set; }    
-        public Game Game { get; set; }  
-        public IEnumerable<Game> Games { get; set; }    
+        public ICollection<Game> Games { get; set; }    
     }
 }
