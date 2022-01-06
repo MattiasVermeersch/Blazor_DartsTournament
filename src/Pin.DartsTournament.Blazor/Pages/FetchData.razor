@@ -2,14 +2,11 @@
 
 <PageTitle>Weather forecast</PageTitle>
 
-@using Pin.DartsTournament.Blazor.Data
-@inject WeatherForecastService ForecastService
-
 <h1>Weather forecast</h1>
 
 <p>This component demonstrates fetching data from a service.</p>
 
-@if (forecasts == null)
+@if (timeout)
 {
     <p><em>Loading...</em></p>
 }
@@ -25,24 +22,21 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
+            <tr>
+                <td colspan=4><p>There is nothing to see here.</p></td>
+            </tr>
         </tbody>
     </table>
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private bool timeout = true;
+    //private WeatherForecast[]? forecasts;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        //forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        await Task.Delay(2000);
+        timeout = false;
     }
 }
