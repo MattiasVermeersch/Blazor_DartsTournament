@@ -2,8 +2,7 @@
 {
     public class Game : EntityBase
     {
-        public Player Player1 { get; set; }
-        public Player Player2 { get; set; }
-        public IEnumerable<Leg> Legs { get; set; }
+        public ICollection<Leg> Legs { get; set; }
+        public ICollection<PlayerGame> PlayerGames { get; set; }
     }
 }
