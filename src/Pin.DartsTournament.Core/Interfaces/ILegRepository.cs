@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pin.DartsTournament.Core.Interfaces
 {
-    public interface IGameService : IBaseService<Game>
+    public interface ILegRepository : IBaseRepository<Leg>
     {
     }
 }

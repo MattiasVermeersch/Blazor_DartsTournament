@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Pin.DartsTournament.Core.Interfaces
 {
-    public interface ILegService : IBaseService<Leg>
+    public interface IPlayerRepository : IBaseRepository<Player>
     {
+        Task<Player> GetPlayerByName(string name);
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pin.DartsTournament.Core.Interfaces
 {
-    public interface IBaseService<T> where T : EntityBase
+    public interface IBaseRepository<T> where T : EntityBase
     {
         IQueryable<T> GetAllAsync();
         Task<IEnumerable<T>> ListAllAsync();
