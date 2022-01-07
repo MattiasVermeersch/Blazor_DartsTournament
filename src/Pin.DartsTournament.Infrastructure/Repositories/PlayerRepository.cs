@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Pin.DartsTournament.Infrastructure.Services
 {
-    public class PlayerService : BaseService<Player>, IPlayerService
+    public class PlayerRepository : BaseRepository<Player>, IPlayerRepository
     {
-        public PlayerService(DartsDbContext dbContext) : base(dbContext) 
+        public PlayerRepository(DartsDbContext dbContext) : base(dbContext) 
         { 
         }
 

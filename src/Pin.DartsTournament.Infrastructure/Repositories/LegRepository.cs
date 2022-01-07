@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Pin.DartsTournament.Infrastructure.Services
 {
-    public class LegService : BaseService<Leg>, ILegService
+    public class LegRepository : BaseRepository<Leg>, ILegRepository
     {
-        public LegService(DartsDbContext dbContext) : base(dbContext)
+        public LegRepository(DartsDbContext dbContext) : base(dbContext)
         {
         }
 

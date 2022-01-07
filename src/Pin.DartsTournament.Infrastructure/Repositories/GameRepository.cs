@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Pin.DartsTournament.Infrastructure.Services
 {
-    public class GameService : BaseService<Game>, IGameService
+    public class GameRepository : BaseRepository<Game>, IGameRepository
     {
-        public GameService(DartsDbContext dbContext) : base(dbContext)
+        public GameRepository(DartsDbContext dbContext) : base(dbContext)
         {
         }
 

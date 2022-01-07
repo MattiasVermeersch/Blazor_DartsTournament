@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Pin.DartsTournament.Infrastructure.Services
 {
-    public class BaseService<T> : IBaseService<T> 
+    public class BaseRepository<T> : IBaseRepository<T> 
         where T : EntityBase
     {
         protected readonly DartsDbContext _dbContext;
 
-        public BaseService(DartsDbContext dbContext)
+        public BaseRepository(DartsDbContext dbContext)
         {
             _dbContext = dbContext;
         }

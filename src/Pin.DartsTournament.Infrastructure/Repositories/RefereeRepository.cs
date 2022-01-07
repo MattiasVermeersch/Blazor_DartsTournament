@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Pin.DartsTournament.Infrastructure.Services
 {
-    public class ThrowService : BaseService<Throw>, IThrowService
+    public class RefereeRepository : BaseRepository<Referee>, IRefereeRepository
     {
-        public ThrowService(DartsDbContext dbContext) : base(dbContext)
+        public RefereeRepository(DartsDbContext dbContext) : base(dbContext)
         {
         }
     }
