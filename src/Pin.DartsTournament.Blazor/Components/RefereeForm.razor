@@ -1,0 +1,27 @@
+﻿<EditForm Model="@Model" OnValidSubmit="@(e => OnSaveClick.InvokeAsync(Model))">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <h1>Add new Referee</h1>
+
+    <div class="form-group">
+        <label for="name">Naam: </label>
+        <InputText id="name" @bind-Value="Model.Name" class="form-control"></InputText>
+        <ValidationMessage For="@(() => Model.Name)" />
+    </div>
+    <br /> 
+    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="button" class="btn btn-warning" @onclick="OnCancelClick">Cancel</button>
+    <br /><hr />
+</EditForm>
+
+@code {
+    [Parameter]
+    public Referee Model { get; set; }
+
+    [Parameter]
+    public EventCallback<Referee> OnSaveClick { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancelClick { get; set; }
+}
