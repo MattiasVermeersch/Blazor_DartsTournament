@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Pin.DartsTournament.Infrastructure.Data;
 using Pin.DartsTournament.Infrastructure.Services;
 using Pin.DartsTournament.Core.Interfaces;
+using Pin.DartsTournament.Blazor.Interfaces;
+using Pin.DartsTournament.Blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,12 +21,14 @@ services.AddDbContext<DartsDbContext>(options =>
 });
 
 //Dependency Injection
-services.AddScoped<ITournamentService, TournamentService>();
-services.AddScoped<IPlayerService, PlayerService>();
-services.AddScoped<IRefereeService, RefereeService>();
-services.AddScoped<IGameService, GameService>();
-services.AddScoped<ILegService, LegService>();
-services.AddScoped<IThrowService, ThrowService>();
+services.AddScoped<ITournamentRepository, TournamentRepository>();
+services.AddScoped<IPlayerRepository, PlayerRepository>();
+services.AddScoped<IRefereeRepository, RefereeRepository>();
+services.AddScoped<IGameRepository, GameRepository>();
+services.AddScoped<ILegRepository, LegRepository>();
+services.AddScoped<IThrowRepository, ThrowRepository>();
+
+services.AddTransient<ITournamentService, TournamentService>();
 
 var app = builder.Build();
 
