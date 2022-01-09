@@ -13,5 +13,6 @@ namespace Pin.DartsTournament.Core.Entities
         public ICollection<Player> Players { get; set; }
         public ICollection<Game> Games { get; set; }
         public ICollection<Referee> Referees { get; set; }
+        public bool IsActive { get; set; }
     }
 }

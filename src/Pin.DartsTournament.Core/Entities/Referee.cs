@@ -4,5 +4,7 @@
     {
         public string Name { get; set; }    
         public ICollection<Game> Games { get; set; }    
+        public Tournament Tournament { get; set; }
+        public long? TournamentId { get; set; }
     }
 }
