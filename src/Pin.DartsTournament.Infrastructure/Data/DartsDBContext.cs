@@ -33,7 +33,6 @@ namespace Pin.DartsTournament.Infrastructure.Data
                 .HasKey(e => e.Id);
             modelBuilder.Entity<Tournament>()
                 .Property(t => t.Name)
-                .HasMaxLength(100)
                 .IsRequired();
 
             modelBuilder.Entity<Game>()
@@ -45,34 +44,54 @@ namespace Pin.DartsTournament.Infrastructure.Data
                 .HasKey(e => e.Id);
             modelBuilder.Entity<Player>()
                 .Property(e => e.Name)
-                .HasMaxLength(100)
                 .IsRequired();
-
-            modelBuilder.Entity<PlayerGame>()
-                .ToTable("PlayerGame")
-                .HasKey(pg => new { pg.PlayerId, pg.GameId });
-            modelBuilder.Entity<PlayerGame>()
-                .HasOne(pg => pg.Player)
-                .WithMany(p => p.PlayerGames);
-            modelBuilder.Entity<PlayerGame>()
-                .HasOne(pg => pg.Game)
-                .WithMany(g => g.PlayerGames);
+            modelBuilder.Entity<Player>()
+                .HasOne(p => p.Tournament)
+                .WithMany(t => t.Players)
+                .HasForeignKey(p => p.TournamentId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Referee>()
                 .ToTable("Referees")
                 .HasKey(e => e.Id);
             modelBuilder.Entity<Referee>()
                 .Property(e => e.Name)
-                .HasMaxLength(100)
                 .IsRequired();
+            modelBuilder.Entity<Referee>()
+                .HasOne(r => r.Tournament)
+                .WithMany(t => t.Referees)
+                .HasForeignKey(r => r.TournamentId);
 
             modelBuilder.Entity<Leg>()
                 .ToTable("Legs")
                 .HasKey(e => e.Id);
+            modelBuilder.Entity<Leg>()
+                .HasOne(l => l.Game)
+                .WithMany(g => g.Legs)
+                .HasForeignKey(l => l.GameId);
+            modelBuilder.Entity<Leg>()
+                .HasOne(l => l.Player)
+                .WithMany(p => p.Legs)
+                .HasForeignKey(l => l.PlayerId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Throw>()
                 .ToTable("Throws")
                 .HasKey(e => e.Id);
+
+            modelBuilder.Entity<PlayerGame>()
+                .ToTable("PlayerGames")
+                .HasKey(pg => new { pg.PlayerId, pg.GameId });
+            modelBuilder.Entity<PlayerGame>()
+                .HasOne(pg => pg.Player)
+                .WithMany(p => p.PlayerGames)
+                .HasForeignKey(pg => pg.PlayerId)
+                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<PlayerGame>()
+                .HasOne(pg => pg.Game)
+                .WithMany(g => g.PlayerGames)
+                .HasForeignKey(pg => pg.GameId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             TournamentSeeder.Seed(modelBuilder);
             PlayerSeeder.Seed(modelBuilder);
