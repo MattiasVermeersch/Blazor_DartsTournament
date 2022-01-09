@@ -25,7 +25,7 @@ namespace Pin.DartsTournament.Infrastructure.Services
             return _dbContext.Set<T>().AsNoTracking();
         }
 
-        public virtual async Task<T> GetByIdAsync(long id)
+        public virtual async Task<T> GetByIdAsync(long? id)
         {
             return await _dbContext.Set<T>().FindAsync(id);
         }
@@ -35,31 +35,53 @@ namespace Pin.DartsTournament.Infrastructure.Services
             return await GetAllAsync().ToListAsync();
         }
 
-        public async Task<bool> AddAsync(T entity)
+        public async Task<T> AddAsync(T entity)
         {
-            await _dbContext.Set<T>().AddAsync(entity);
+            try
+            {
+                await _dbContext.Set<T>().AddAsync(entity);
 
-            var result = await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
-            return CheckContextChanges(result);
+                return await GetByIdAsync(entity.Id);
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception(ex.Message);
+            }            
         }
 
-        public async Task<bool> UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            try
+            {
+                _dbContext.Entry(entity).State = EntityState.Modified;
 
-            var result = await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
-            return CheckContextChanges(result);
+                return await GetByIdAsync(entity.Id);
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<bool> DeleteAsync(T entity)
         {
-            _dbContext.Set<T>().Remove(entity);
+            try
+            {
+                _dbContext.Set<T>().Remove(entity);
 
-            var result = await _dbContext.SaveChangesAsync();
+                var result = await _dbContext.SaveChangesAsync();
 
-            return CheckContextChanges(result);
+                if (result > 0) return true;
+                else return false;
+            }
+            catch(DbUpdateException ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<bool> DeleteByIdAsync(long id)
@@ -67,12 +89,5 @@ namespace Pin.DartsTournament.Infrastructure.Services
             T entity = await GetByIdAsync(id);
             return await DeleteAsync(entity);
         }
-
-        private bool CheckContextChanges(int result)
-        {
-            if (result == 1) return true;
-            else return false;
-        } 
-        
     }
 }
