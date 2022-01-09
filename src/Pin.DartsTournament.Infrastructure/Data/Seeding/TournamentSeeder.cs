@@ -16,8 +16,9 @@ namespace Pin.DartsTournament.Infrastructure.Data.Seeding
                 new Tournament
                 {
                     Id = 100,
-                    Name = "Conf-IT-uurtjes Toernooi"
-                }    
+                    Name = "Conf-IT-uurtjes Toernooi",
+                    Date = new DateTime(2022, 01, 24)
+                }
             );
         }
     }

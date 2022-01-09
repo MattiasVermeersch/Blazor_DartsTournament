@@ -16,32 +16,38 @@ namespace Pin.DartsTournament.Infrastructure.Data.Seeding
                 new Player
                 {
                     Id = 1,
-                    Name = "Jane Doe"
+                    Name = "Jane Doe",
+                    TournamentId = 100
                 },
                 new Player
                 {
                     Id = 2,
-                    Name = "John Doe"
+                    Name = "John Doe",
+                    TournamentId = 100
                 },
                 new Player
                 {
                     Id = 3,
-                    Name = "Harry Potter"
+                    Name = "Harry Potter",
+                    TournamentId = 100
                 },
                 new Player
                 {
                     Id = 4,
-                    Name = "Mr. Anderson"
+                    Name = "Mr. Anderson",
+                    TournamentId = 100
                 },
                 new Player
                 {
                     Id = 5,
-                    Name = "Pablo Picasso"
+                    Name = "Pablo Picasso",
+                    TournamentId = 100
                 },
                 new Player
                 {
                     Id = 6,
-                    Name = "Johan Vermeer"
+                    Name = "Johan Vermeer",
+                    TournamentId = 100
                 }
             );
         }

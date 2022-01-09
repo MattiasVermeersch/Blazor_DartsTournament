@@ -16,12 +16,14 @@ namespace Pin.DartsTournament.Infrastructure.Data.Seeding
                 new Referee
                 {
                     Id = 30,
-                    Name = "Lector Deboosere"
+                    Name = "Lector Deboosere",
+                    TournamentId = 100
                 },
                 new Referee
                 {
                     Id = 31,
-                    Name = "Lector Derdeyn"
+                    Name = "Lector Derdeyn",
+                    TournamentId = 100
                 }
             );
         }
