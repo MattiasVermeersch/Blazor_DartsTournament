@@ -84,7 +84,7 @@ namespace Pin.DartsTournament.Infrastructure.Services
             }
         }
 
-        public async Task<bool> DeleteByIdAsync(long id)
+        public async Task<bool> DeleteByIdAsync(long? id)
         {
             T entity = await GetByIdAsync(id);
             return await DeleteAsync(entity);
