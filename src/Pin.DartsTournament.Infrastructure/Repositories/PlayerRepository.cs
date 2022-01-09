@@ -23,7 +23,7 @@ namespace Pin.DartsTournament.Infrastructure.Services
                     .ThenInclude(pg => pg.Game);
         }
 
-        public override async Task<Player> GetByIdAsync(long id)
+        public override async Task<Player> GetByIdAsync(long? id)
         {
             return await GetAllAsync().SingleOrDefaultAsync(p => p.Id.Equals(id));
         }

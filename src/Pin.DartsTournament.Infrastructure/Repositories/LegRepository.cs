@@ -20,10 +20,10 @@ namespace Pin.DartsTournament.Infrastructure.Services
         {
             return _dbContext.Legs.AsNoTracking()
                 .Include(l => l.Throws)
-                .Include(l => l.Player);
+                .Include(l => l.Game);
         }
 
-        public override Task<Leg> GetByIdAsync(long id)
+        public override Task<Leg> GetByIdAsync(long? id)
         {
             return GetAllAsync().FirstOrDefaultAsync(l => l.Id.Equals(id));
         }
