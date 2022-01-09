@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pin.DartsTournament.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using Pin.DartsTournament.Infrastructure.Data;
 namespace Pin.DartsTournament.Infrastructure.Migrations
 {
     [DbContext(typeof(DartsDbContext))]
-    partial class DartsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220108003313_UpdateSeeding")]
+    partial class UpdateSeeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,7 +41,7 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                     b.Property<long?>("RefereeId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("TournamentId")
+                    b.Property<long>("TournamentId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -59,10 +61,10 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<long?>("GameId")
+                    b.Property<long>("GameId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("PlayerId")
+                    b.Property<long>("PlayerId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Score")
@@ -134,7 +136,6 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                             Id = 4L,
                             Losses = 0,
                             Name = "Mr. Anderson",
-                            TournamentId = 100L,
                             Wins = 0
                         },
                         new
@@ -142,7 +143,6 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                             Id = 5L,
                             Losses = 0,
                             Name = "Pablo Picasso",
-                            TournamentId = 100L,
                             Wins = 0
                         },
                         new
@@ -150,7 +150,6 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                             Id = 6L,
                             Losses = 0,
                             Name = "Johan Vermeer",
-                            TournamentId = 100L,
                             Wins = 0
                         });
                 });
@@ -214,7 +213,7 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<long?>("LegId")
+                    b.Property<long>("LegId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Number")
@@ -256,7 +255,7 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                         new
                         {
                             Id = 100L,
-                            Date = new DateTime(2022, 1, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false,
                             Name = "Conf-IT-uurtjes Toernooi"
                         });
@@ -270,7 +269,9 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
 
                     b.HasOne("Pin.DartsTournament.Core.Entities.Tournament", "Tournament")
                         .WithMany("Games")
-                        .HasForeignKey("TournamentId");
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Tournament");
                 });
@@ -279,12 +280,15 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                 {
                     b.HasOne("Pin.DartsTournament.Core.Entities.Game", "Game")
                         .WithMany("Legs")
-                        .HasForeignKey("GameId");
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Pin.DartsTournament.Core.Entities.Player", "Player")
                         .WithMany("Legs")
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Game");
 
@@ -333,7 +337,9 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                 {
                     b.HasOne("Pin.DartsTournament.Core.Entities.Leg", "Leg")
                         .WithMany("Throws")
-                        .HasForeignKey("LegId");
+                        .HasForeignKey("LegId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Leg");
                 });

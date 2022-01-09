@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pin.DartsTournament.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using Pin.DartsTournament.Infrastructure.Data;
 namespace Pin.DartsTournament.Infrastructure.Migrations
 {
     [DbContext(typeof(DartsDbContext))]
-    partial class DartsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220108143103_UpdateIds")]
+    partial class UpdateIds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,7 +136,6 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                             Id = 4L,
                             Losses = 0,
                             Name = "Mr. Anderson",
-                            TournamentId = 100L,
                             Wins = 0
                         },
                         new
@@ -142,7 +143,6 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                             Id = 5L,
                             Losses = 0,
                             Name = "Pablo Picasso",
-                            TournamentId = 100L,
                             Wins = 0
                         },
                         new
@@ -150,7 +150,6 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                             Id = 6L,
                             Losses = 0,
                             Name = "Johan Vermeer",
-                            TournamentId = 100L,
                             Wins = 0
                         });
                 });
