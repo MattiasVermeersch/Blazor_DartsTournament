@@ -11,10 +11,10 @@ namespace Pin.DartsTournament.Core.Interfaces
     {
         IQueryable<T> GetAllAsync();
         Task<IEnumerable<T>> ListAllAsync();
-        Task<T> GetByIdAsync(long id);
-        Task<bool> AddAsync(T entity);
-        Task<bool> UpdateAsync(T entity);
+        Task<T> GetByIdAsync(long? id);
+        Task<T> AddAsync(T entity);
+        Task<T> UpdateAsync(T entity);
         Task<bool> DeleteAsync(T entity);
-        Task<bool> DeleteByIdAsync(long id);
+        Task<bool> DeleteByIdAsync(long? id);
     }
 }
