@@ -2,11 +2,13 @@
 {
     public class Leg : EntityBase
     {
-        public int Score { get; set; }
-        public Player Player { get; set; }
-        public long? PlayerId { get; set; }
-        public Game Game { get; set; }
-        public long? GameId { get; set; }
-        public ICollection<Throw> Throws { get; set; }
+        public int ScorePlayer1 { get; set; }
+        public int ScorePlayer2 { get; set; }
+        public ICollection<Set> Sets { get; set; }
+        public ICollection<PlayerLeg> PlayerLegs { get; set; }
+        public Tournament Tournament { get; set; }
+        public long? TournamentId { get; set; }
+        public bool IsActive { get; set; } = default;
+        public bool IsPlayed { get; set; } = default;
     }
 }

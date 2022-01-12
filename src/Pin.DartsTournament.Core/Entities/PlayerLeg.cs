@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Pin.DartsTournament.Core.Entities
 {
-    public class PlayerGame
+    public class PlayerLeg
     {
         public long PlayerId { get; set; }
-        public long GameId { get; set; }
+        public long LegId { get; set; }
         public Player Player { get; set; }
-        public Game Game { get; set; }
+        public Leg Leg { get; set; }
     }
 }
