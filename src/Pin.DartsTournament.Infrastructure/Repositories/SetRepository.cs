@@ -10,20 +10,33 @@ using System.Threading.Tasks;
 
 namespace Pin.DartsTournament.Infrastructure.Services
 {
-    public class RefereeRepository : BaseRepository<Referee>, IRefereeRepository
+    public class SetRepository : BaseRepository<Set>, ISetRepository
     {
-        public RefereeRepository(DartsDbContext dbContext) : base(dbContext)
+        public SetRepository(DartsDbContext dbContext) : base(dbContext)
         {
         }
 
-        public override async Task<Referee> UpdateAsync(Referee entity)
+        public override IQueryable<Set> GetAllAsync()
+        {
+            return _table.AsNoTracking()
+                .Include(l => l.Throws)
+                .Include(l => l.Leg);
+        }
+
+        public override async Task<Set> GetByIdAsync(long? id)
+        {
+            return await GetAllAsync().FirstOrDefaultAsync(l => l.Id.Equals(id));
+        }
+
+        public override async Task<Set> UpdateAsync(Set entity)
         {
             try
             {
                 var dbEntity = await _table.FindAsync(entity.Id);
 
-                dbEntity.Name = entity.Name;
-                dbEntity.TournamentId = entity.TournamentId;
+                dbEntity.Score = entity.Score;
+                dbEntity.PlayerId = entity.PlayerId;
+                dbEntity.LegId = entity.LegId;
 
                 await _dbContext.SaveChangesAsync();
 
