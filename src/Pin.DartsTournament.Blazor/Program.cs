@@ -24,11 +24,11 @@ services.AddDbContext<DartsDbContext>(options =>
 services.AddScoped<ITournamentRepository, TournamentRepository>();
 services.AddScoped<IPlayerRepository, PlayerRepository>();
 services.AddScoped<IRefereeRepository, RefereeRepository>();
-services.AddScoped<IGameRepository, GameRepository>();
 services.AddScoped<ILegRepository, LegRepository>();
+services.AddScoped<ISetRepository, SetRepository>();
 services.AddScoped<IThrowRepository, ThrowRepository>();
 
-services.AddTransient<ITournamentService, TournamentService>();
+services.AddScoped<ITournamentService, TournamentService>();
 
 var app = builder.Build();
 
