@@ -6,91 +6,36 @@
 
 @if(Tournament == null)
 {
-    <Loading Subject="Home"></Loading>
+    <Loading Subject="Home" />
 }
 else
 {
-    <div class=img-container>
-        <img src="/images/darts_banner2.jpg" class=img-banner>
-        <div class=centered>
-            <p class="banner-text">@Tournament.Name</p>
-            <br />
-            <p class="banner-text">@Date</p>
-        </div>
-    </div>
-    <br />
+    <BannerWithTitle Model="@Tournament" ImageSrc="/images/darts_banner2.jpg" />
 
-    if(newPlayer == null && newReferee == null)
+    if(newPlayer == null && Legs.Count() == 0)
     {
-    <div class="inline-div">
-        <table class="table table-striped table-bordered floatLeft">
-            <thead>
-                <tr>
-                    <th>Players</th>
-                </tr>
-            </thead>
-            <tbody>
-                    @if(Tournament.Players == null)
-                    {
-                        <tr>
-                            <td colspan=2>There are no players listed in this tournament.</td>
-                        </tr>
-                    }
-                    else
-                    {
-                        foreach(var player in Tournament.Players)
-                        {
-                            <tr>
-                                <td colspan=2>@player.Name</td>
-                            </tr>
-                        }
-                    }
-                <tr>
-                    <td><center><button class=button-link @onclick="AddPlayer">Add players</button></center></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <table class="table table-striped table-bordered floatRight">
-            <thead>
-                <tr>
-                    <th>Referees</th>
-                </tr>
-            </thead>
-            <tbody>
-                    @if(Tournament.Referees == null)
-                    {
-                        <tr>
-                            <td colspan=2>There are no referees listed in this tournament.</td>
-                        </tr>
-                    }
-                    else
-                    {
-                        foreach(var referee in Tournament.Referees)
-                        {
-                            <tr>
-                                <td>@referee.Name</td>
-                            </tr>
-                        } 
-                    }
-                <tr>
-                    <td><center><button class=button-link @onclick="AddReferee">Add referees</button></center></td>
-                </tr>
-            </tbody>
-        </table>
-        </div>
+     <div class="container">
+        <button class="btn btn-info" @onclick="StartTournament">Start het toernooi</button>
+     </div>
+        
+    <PlayerTable ModelList="@Players" OnAddClick="AddPlayer" />
     }
-    if(newPlayer != null)
+    @if(newPlayer != null)
     {
         <PlayerForm Model="newPlayer"
             OnSaveClick="AddPlayerToTournament"
-            OnCancelClick="GetTournament"></PlayerForm>
+            OnBackClick="GetTournament"></PlayerForm>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="alert alert-success">
+                @message
+            </div>
+        }
     }
-    if(newReferee != null)
+    @if(Legs.Count() > 0)
     {
-        <RefereeForm Model="newReferee"
-            OnSaveClick="AddRefereeToTournament"
-            OnCancelClick="GetTournament"></RefereeForm>
+        <MatchCards LegsList="@Legs" />
     }
 }
 
@@ -98,7 +43,9 @@ else
     private Tournament Tournament { get; set; }
     private string Date { get; set; }
     private Player newPlayer;
-    private Referee newReferee;
+    private IEnumerable<Leg> Legs { get; set; }
+    private IEnumerable<Player> Players { get; set; }
+    private string message;
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,11 +58,14 @@ else
     public async Task GetTournament()
     {
         this.newPlayer = null;
-        this.newReferee = null;
 
         Tournament = await service.GetByIdAsync(100);
 
         Date = Tournament.Date.ToString("dd/MM/yyyy");
+
+        Players = Tournament.Players;
+
+        Legs = Tournament.Legs;
     }
 
     public void AddPlayer()
@@ -123,24 +73,29 @@ else
         this.newPlayer = new Player();
     }
 
-    public void AddReferee()
-    {
-        this.newReferee = new Referee();
-
-    }
-
     public async Task AddPlayerToTournament(Player player)
     {
         player.TournamentId = this.Tournament.Id;
         await service.AddPlayerToTournament(player);
+        
+        this.message = $"{player.Name} werd toegevoegd aan het toernooi.";
+        
+        player.Name = null;
+        StateHasChanged();
 
-        await GetTournament();
+        await ClearMessages();
     }
 
-    public async Task AddRefereeToTournament(Referee referee)
+    private async Task ClearMessages()
     {
-        referee.TournamentId = this.Tournament.Id;
-        await service.AddRefereeToTournament(referee);
+        await Task.Delay(5000);
+        this.message = null;
+    }
+
+    public async Task StartTournament()
+    {
+        var id = Tournament.Id;
+        await service.StartTournament(id);
 
         await GetTournament();
     }
