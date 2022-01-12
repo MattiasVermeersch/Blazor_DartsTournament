@@ -10,5 +10,6 @@ namespace Pin.DartsTournament.Core.Interfaces
     public interface IPlayerRepository : IBaseRepository<Player>
     {
         Task<Player> GetPlayerByName(string name);
+        Task<IEnumerable<Player>> GetPlayersByTournamentIdAsync(long? tournamentId);
     }
 }

@@ -9,5 +9,6 @@ namespace Pin.DartsTournament.Core.Interfaces
 {
     public interface ILegRepository : IBaseRepository<Leg>
     {
+        Task AddPlayersToGame(IEnumerable<Player> players, long? legId);
     }
 }
