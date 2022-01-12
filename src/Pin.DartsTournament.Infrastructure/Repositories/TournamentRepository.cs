@@ -21,7 +21,7 @@ namespace Pin.DartsTournament.Infrastructure.Services
             return _dbContext.Tournaments.AsNoTracking()
                 .Include(t => t.Referees)
                 .Include(t => t.Players)
-                .Include(t => t.Games)
+                .Include(t => t.Legs)
                     .ThenInclude(g => g.PlayerLegs)
                         .ThenInclude(pg => pg.Player);
         }
