@@ -11,7 +11,7 @@ namespace Pin.DartsTournament.Core.Entities
         public string Name { get; set; }
         public DateTime Date { get; set; }
         public ICollection<Player> Players { get; set; }
-        public ICollection<Leg> Games { get; set; }
+        public ICollection<Leg> Legs { get; set; }
         public ICollection<Referee> Referees { get; set; }
         public bool IsActive { get; set; }
     }
