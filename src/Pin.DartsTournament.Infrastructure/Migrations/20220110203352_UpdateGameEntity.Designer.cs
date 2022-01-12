@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pin.DartsTournament.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using Pin.DartsTournament.Infrastructure.Data;
 namespace Pin.DartsTournament.Infrastructure.Migrations
 {
     [DbContext(typeof(DartsDbContext))]
-    partial class DartsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220110203352_UpdateGameEntity")]
+    partial class UpdateGameEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +24,7 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Leg", b =>
+            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Game", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -53,6 +55,32 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                     b.HasIndex("RefereeId");
 
                     b.HasIndex("TournamentId");
+
+                    b.ToTable("Games", (string)null);
+                });
+
+            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Leg", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long?>("GameId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("PlayerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("PlayerId");
 
                     b.ToTable("Legs", (string)null);
                 });
@@ -135,19 +163,19 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.PlayerLeg", b =>
+            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.PlayerGame", b =>
                 {
                     b.Property<long>("PlayerId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("LegId")
+                    b.Property<long>("GameId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("PlayerId", "LegId");
+                    b.HasKey("PlayerId", "GameId");
 
-                    b.HasIndex("LegId");
+                    b.HasIndex("GameId");
 
-                    b.ToTable("PlayerLegs", (string)null);
+                    b.ToTable("PlayerGames", (string)null);
                 });
 
             modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Referee", b =>
@@ -184,32 +212,6 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                             Name = "Lector Derdeyn",
                             TournamentId = 100L
                         });
-                });
-
-            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Set", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<long?>("LegId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("PlayerId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LegId");
-
-                    b.HasIndex("PlayerId");
-
-                    b.ToTable("Sets", (string)null);
                 });
 
             modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Throw", b =>
@@ -268,7 +270,7 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Leg", b =>
+            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Game", b =>
                 {
                     b.HasOne("Pin.DartsTournament.Core.Entities.Referee", null)
                         .WithMany("Games")
@@ -281,6 +283,22 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                     b.Navigation("Tournament");
                 });
 
+            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Leg", b =>
+                {
+                    b.HasOne("Pin.DartsTournament.Core.Entities.Game", "Game")
+                        .WithMany("Legs")
+                        .HasForeignKey("GameId");
+
+                    b.HasOne("Pin.DartsTournament.Core.Entities.Player", "Player")
+                        .WithMany("Legs")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Game");
+
+                    b.Navigation("Player");
+                });
+
             modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Player", b =>
                 {
                     b.HasOne("Pin.DartsTournament.Core.Entities.Tournament", "Tournament")
@@ -291,21 +309,21 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                     b.Navigation("Tournament");
                 });
 
-            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.PlayerLeg", b =>
+            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.PlayerGame", b =>
                 {
-                    b.HasOne("Pin.DartsTournament.Core.Entities.Leg", "Leg")
-                        .WithMany("PlayerLegs")
-                        .HasForeignKey("LegId")
+                    b.HasOne("Pin.DartsTournament.Core.Entities.Game", "Game")
+                        .WithMany("PlayerGames")
+                        .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Pin.DartsTournament.Core.Entities.Player", "Player")
-                        .WithMany("PlayerLegs")
+                        .WithMany("PlayerGames")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Leg");
+                    b.Navigation("Game");
 
                     b.Navigation("Player");
                 });
@@ -319,53 +337,37 @@ namespace Pin.DartsTournament.Infrastructure.Migrations
                     b.Navigation("Tournament");
                 });
 
-            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Set", b =>
-                {
-                    b.HasOne("Pin.DartsTournament.Core.Entities.Leg", "Leg")
-                        .WithMany("Sets")
-                        .HasForeignKey("LegId");
-
-                    b.HasOne("Pin.DartsTournament.Core.Entities.Player", "Player")
-                        .WithMany("Sets")
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Leg");
-
-                    b.Navigation("Player");
-                });
-
             modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Throw", b =>
                 {
-                    b.HasOne("Pin.DartsTournament.Core.Entities.Set", "Leg")
+                    b.HasOne("Pin.DartsTournament.Core.Entities.Leg", "Leg")
                         .WithMany("Throws")
                         .HasForeignKey("LegId");
 
                     b.Navigation("Leg");
                 });
 
+            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Game", b =>
+                {
+                    b.Navigation("Legs");
+
+                    b.Navigation("PlayerGames");
+                });
+
             modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Leg", b =>
                 {
-                    b.Navigation("PlayerLegs");
-
-                    b.Navigation("Sets");
+                    b.Navigation("Throws");
                 });
 
             modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Player", b =>
                 {
-                    b.Navigation("PlayerLegs");
+                    b.Navigation("Legs");
 
-                    b.Navigation("Sets");
+                    b.Navigation("PlayerGames");
                 });
 
             modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Referee", b =>
                 {
                     b.Navigation("Games");
-                });
-
-            modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Set", b =>
-                {
-                    b.Navigation("Throws");
                 });
 
             modelBuilder.Entity("Pin.DartsTournament.Core.Entities.Tournament", b =>
