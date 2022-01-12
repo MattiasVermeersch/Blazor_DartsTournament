@@ -6,5 +6,6 @@ namespace Pin.DartsTournament.Blazor.Interfaces
     {
         Task<Tournament> AddPlayerToTournament(Player player);
         Task<Tournament> AddRefereeToTournament(Referee referee);
+        Task StartTournament(long? id);
     }
 }
