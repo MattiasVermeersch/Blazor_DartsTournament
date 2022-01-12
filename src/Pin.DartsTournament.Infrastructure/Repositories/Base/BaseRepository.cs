@@ -14,20 +14,22 @@ namespace Pin.DartsTournament.Infrastructure.Services
         where T : EntityBase
     {
         protected readonly DartsDbContext _dbContext;
+        protected DbSet<T> _table;
 
         public BaseRepository(DartsDbContext dbContext)
         {
             _dbContext = dbContext;
+            _table = _dbContext.Set<T>();
         }
 
         public virtual IQueryable<T> GetAllAsync()
         {
-            return _dbContext.Set<T>().AsNoTracking();
+            return _table.AsNoTracking();
         }
 
         public virtual async Task<T> GetByIdAsync(long? id)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            return await _table.FindAsync(id);
         }
 
         public async Task<IEnumerable<T>> ListAllAsync()
@@ -35,11 +37,11 @@ namespace Pin.DartsTournament.Infrastructure.Services
             return await GetAllAsync().ToListAsync();
         }
 
-        public async Task<T> AddAsync(T entity)
+        public virtual async Task<T> AddAsync(T entity)
         {
             try
             {
-                await _dbContext.Set<T>().AddAsync(entity);
+                await _table.AddAsync(entity);
 
                 await _dbContext.SaveChangesAsync();
 
@@ -51,11 +53,13 @@ namespace Pin.DartsTournament.Infrastructure.Services
             }            
         }
 
-        public async Task<T> UpdateAsync(T entity)
+        public virtual async Task<T> UpdateAsync(T entity)
         {
             try
             {
-                _dbContext.Entry(entity).State = EntityState.Modified;
+                var dbEntity = await _table.FindAsync(entity.Id);
+
+                //compare and change properties on entity and dbEntity
 
                 await _dbContext.SaveChangesAsync();
 
@@ -67,11 +71,11 @@ namespace Pin.DartsTournament.Infrastructure.Services
             }
         }
 
-        public async Task<bool> DeleteAsync(T entity)
+        public virtual async Task<bool> DeleteAsync(T entity)
         {
             try
             {
-                _dbContext.Set<T>().Remove(entity);
+                _table.Remove(entity);
 
                 var result = await _dbContext.SaveChangesAsync();
 
