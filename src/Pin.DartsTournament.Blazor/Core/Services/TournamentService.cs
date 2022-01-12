@@ -89,8 +89,8 @@ namespace Pin.DartsTournament.Blazor.Services
                         players.ToList()[j],
                     };
 
-                    var dbLeg = await _gameRepository.AddAsync(newLeg);
-                    await _gameRepository.AddPlayersToGame(twoPlayersForLeg, dbLeg.Id);
+                    var dbLeg = await _legRepository.AddAsync(newLeg);
+                    await _legRepository.AddPlayersToGame(twoPlayersForLeg, dbLeg.Id);
                 }
             }
         }
