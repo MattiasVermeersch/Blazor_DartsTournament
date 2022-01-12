@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pin.DartsTournament.Blazor", "Pin.DartsTournament.Blazor\Pin.DartsTournament.Blazor.csproj", "{90179EB8-C2AC-4242-B5A1-1AA32A40F7B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pin.DartsTournament.Core", "Pin.DartsTournament.Core\Pin.DartsTournament.Core.csproj", "{6EF9C683-1A8A-49AE-8FEA-2F329515C461}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pin.DartsTournament.Core", "Pin.DartsTournament.Core\Pin.DartsTournament.Core.csproj", "{6EF9C683-1A8A-49AE-8FEA-2F329515C461}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pin.DartsTournament.Infrastructure", "Pin.DartsTournament.Infrastructure\Pin.DartsTournament.Infrastructure.csproj", "{2A77E6ED-0312-4A3B-865D-9D067A7B4227}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pin.DartsTournament.Infrastructure", "Pin.DartsTournament.Infrastructure\Pin.DartsTournament.Infrastructure.csproj", "{2A77E6ED-0312-4A3B-865D-9D067A7B4227}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
