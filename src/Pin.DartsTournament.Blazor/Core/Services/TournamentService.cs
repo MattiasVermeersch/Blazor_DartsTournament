@@ -9,17 +9,17 @@ namespace Pin.DartsTournament.Blazor.Services
         protected readonly ITournamentRepository _tournamentRepository;
         protected readonly IPlayerRepository _playerRepository;
         protected readonly IRefereeRepository _refereeRepository;
-        protected readonly ILegRepository _gameRepository;
+        protected readonly ILegRepository _legRepository;
 
         public TournamentService(ITournamentRepository tournamentRepository,
             IPlayerRepository playerRepository,
             IRefereeRepository refereeRepository,
-            ILegRepository gameRepository)
+            ILegRepository legRepository)
         {
             _tournamentRepository = tournamentRepository;
             _playerRepository = playerRepository;
             _refereeRepository = refereeRepository;
-            _gameRepository = gameRepository;
+            _legRepository = legRepository;
         }
         public async Task<Tournament> AddAsync(Tournament entity)
         {
@@ -76,21 +76,21 @@ namespace Pin.DartsTournament.Blazor.Services
             {
                 for(int j = i + 1; j < players.Count(); j++)
                 {
-                    Leg newGame = new Leg
+                    Leg newLeg = new Leg
                     {
                         ScorePlayer1 = 501,
                         ScorePlayer2 = 501,
                         TournamentId = tournamentId
                     };
 
-                    var twoPlayersForGame = new List<Player>
+                    var twoPlayersForLeg = new List<Player>
                     {
                         players.ToList()[i],
                         players.ToList()[j],
                     };
 
-                    var dbGame = await _gameRepository.AddAsync(newGame);
-                    await _gameRepository.AddPlayersToGame(twoPlayersForGame, dbGame.Id);
+                    var dbLeg = await _gameRepository.AddAsync(newLeg);
+                    await _gameRepository.AddPlayersToGame(twoPlayersForLeg, dbLeg.Id);
                 }
             }
         }
