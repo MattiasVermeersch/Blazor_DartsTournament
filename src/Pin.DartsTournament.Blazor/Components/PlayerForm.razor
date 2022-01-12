@@ -1,6 +1,5 @@
 ﻿<EditForm Model="@Model" OnValidSubmit="@(e => OnSaveClick.InvokeAsync(Model))">
     <DataAnnotationsValidator />
-    <ValidationSummary />
 
     <h1>Add new Player</h1>
 
@@ -11,7 +10,7 @@
     </div>
     <br /> 
     <button type="submit" class="btn btn-primary">Save</button>
-    <button type="button" class="btn btn-warning" @onclick="OnCancelClick">Cancel</button>
+    <button type="button" class="btn btn-warning" @onclick="OnBackClick">Back</button>
     <br /><hr />
 </EditForm>
 
@@ -23,5 +22,5 @@
     public EventCallback<Player> OnSaveClick { get; set; }
 
     [Parameter]
-    public EventCallback OnCancelClick { get; set; }
+    public EventCallback OnBackClick { get; set; }
 }
