@@ -12,13 +12,12 @@ namespace Pin.DartsTournament.Infrastructure.Data
     public class DartsDbContext : DbContext
     {
         public DbSet<Tournament> Tournaments { get; set; }
-        public DbSet<Game> Games { get; set; }
+        public DbSet<Leg> Legs { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<Referee> Referees { get; set; }
-        public DbSet<Leg> Legs { get; set; }
+        public DbSet<Set> Sets { get; set; }
         public DbSet<Throw> Throws { get; set; }
-
-        public DbSet<PlayerGame> PlayerGames { get; set; }
+        public DbSet<PlayerLeg> PlayerLegs { get; set; }
 
         public DartsDbContext(DbContextOptions<DartsDbContext> options) 
             : base(options)
@@ -35,8 +34,8 @@ namespace Pin.DartsTournament.Infrastructure.Data
                 .Property(t => t.Name)
                 .IsRequired();
 
-            modelBuilder.Entity<Game>()
-                .ToTable("Games")
+            modelBuilder.Entity<Leg>()
+                .ToTable("Legs")
                 .HasKey(e => e.Id);
 
             modelBuilder.Entity<Player>()
@@ -62,16 +61,16 @@ namespace Pin.DartsTournament.Infrastructure.Data
                 .WithMany(t => t.Referees)
                 .HasForeignKey(r => r.TournamentId);
 
-            modelBuilder.Entity<Leg>()
-                .ToTable("Legs")
+            modelBuilder.Entity<Set>()
+                .ToTable("Sets")
                 .HasKey(e => e.Id);
-            modelBuilder.Entity<Leg>()
-                .HasOne(l => l.Game)
-                .WithMany(g => g.Legs)
-                .HasForeignKey(l => l.GameId);
-            modelBuilder.Entity<Leg>()
+            modelBuilder.Entity<Set>()
+                .HasOne(s => s.Leg)
+                .WithMany(g => g.Sets)
+                .HasForeignKey(l => l.LegId);
+            modelBuilder.Entity<Set>()
                 .HasOne(l => l.Player)
-                .WithMany(p => p.Legs)
+                .WithMany(p => p.Sets)
                 .HasForeignKey(l => l.PlayerId)
                 .OnDelete(DeleteBehavior.NoAction);
 
@@ -79,18 +78,18 @@ namespace Pin.DartsTournament.Infrastructure.Data
                 .ToTable("Throws")
                 .HasKey(e => e.Id);
 
-            modelBuilder.Entity<PlayerGame>()
-                .ToTable("PlayerGames")
-                .HasKey(pg => new { pg.PlayerId, pg.GameId });
-            modelBuilder.Entity<PlayerGame>()
+            modelBuilder.Entity<PlayerLeg>()
+                .ToTable("PlayerLegs")
+                .HasKey(pg => new { pg.PlayerId, pg.LegId });
+            modelBuilder.Entity<PlayerLeg>()
                 .HasOne(pg => pg.Player)
-                .WithMany(p => p.PlayerGames)
+                .WithMany(p => p.PlayerLegs)
                 .HasForeignKey(pg => pg.PlayerId)
                 .OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<PlayerGame>()
-                .HasOne(pg => pg.Game)
-                .WithMany(g => g.PlayerGames)
-                .HasForeignKey(pg => pg.GameId)
+            modelBuilder.Entity<PlayerLeg>()
+                .HasOne(pg => pg.Leg)
+                .WithMany(g => g.PlayerLegs)
+                .HasForeignKey(pg => pg.LegId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             TournamentSeeder.Seed(modelBuilder);
