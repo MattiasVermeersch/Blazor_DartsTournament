@@ -19,10 +19,11 @@ namespace Pin.DartsTournament.Infrastructure.Services
         public override IQueryable<Leg> GetAllAsync()
         {
             return _table.AsNoTracking()
-                .Include(g => g.Sets)
-                    .ThenInclude(l => l.Throws)
-                .Include(g => g.PlayerLegs)
-                    .ThenInclude(pg => pg.Player);
+                .Include(l => l.Sets)
+                    .ThenInclude(s => s.Throws)
+                .Include(l => l.PlayerLegs)
+                    .ThenInclude(pl => pl.Player)
+                .Include(l => l.Tournament);
         }
 
         public override async Task<Leg> GetByIdAsync(long? id)
@@ -38,6 +39,8 @@ namespace Pin.DartsTournament.Infrastructure.Services
 
                 dbEntity.ScorePlayer1 = entity.ScorePlayer1;
                 dbEntity.ScorePlayer2 = entity.ScorePlayer2;
+                dbEntity.CurrentlyPlayingId = entity.CurrentlyPlayingId;
+                dbEntity.WinnerId = entity.WinnerId;
                 dbEntity.IsActive = entity.IsActive;
                 dbEntity.IsPlayed = entity.IsPlayed;
                 dbEntity.TournamentId = entity.TournamentId;
