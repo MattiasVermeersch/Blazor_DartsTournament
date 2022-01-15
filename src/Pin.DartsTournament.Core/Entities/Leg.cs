@@ -4,6 +4,8 @@
     {
         public int ScorePlayer1 { get; set; }
         public int ScorePlayer2 { get; set; }
+        public long? CurrentlyPlayingId { get; set; }
+        public long? WinnerId { get; set; }
         public ICollection<Set> Sets { get; set; }
         public ICollection<PlayerLeg> PlayerLegs { get; set; }
         public Tournament Tournament { get; set; }
