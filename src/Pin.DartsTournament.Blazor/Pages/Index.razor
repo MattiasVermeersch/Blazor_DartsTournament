@@ -1,28 +1,34 @@
 ﻿@page "/"
 
-@inject ITournamentService service
+@inject ITournamentService tournamentService
+@inject ILegService legService
+
 
 <center><PageTitle>Darts Toernooi</PageTitle></center>
 
 @if(Tournament == null)
 {
-    <Loading Subject="Home" />
+    <Loading Subject="Tournament" />
 }
 else
 {
-    <BannerWithTitle Model="@Tournament" ImageSrc="/images/darts_banner2.jpg" />
-
-    if(newPlayer == null && Legs.Count() == 0)
+    @if(currentLeg == null)
     {
-     <div class="container">
-        <button class="btn btn-info" @onclick="StartTournament">Start het toernooi</button>
+        <BannerWithTitle Model="@Tournament" ImageSrc="/images/darts_banner2.jpg" />
+    }
+    
+    if(newPlayer == null && !Tournament.IsActive)
+    {
+     <div class="col-12 text-center">
+        <button class="btn btn-primary btn-lg" @onclick="StartTournament">Start het toernooi</button>
      </div>
         
-    <PlayerTable ModelList="@Players" OnAddClick="AddPlayer" />
+    <PlayerTable PlayerList="@Players" OnAddClick="AddPlayer" />
     }
+
     @if(newPlayer != null)
     {
-        <PlayerForm Model="newPlayer"
+        <PlayerForm Model="@newPlayer"
             OnSaveClick="AddPlayerToTournament"
             OnBackClick="GetTournament"></PlayerForm>
 
@@ -33,24 +39,37 @@ else
             </div>
         }
     }
-    @if(Legs.Count() > 0)
+
+    @if(Tournament.IsActive && currentLeg == null)
     {
-        <MatchCards LegsList="@Legs" />
+        <MatchCards LegsList="@Legs"
+            Counter=0
+            OnStartMatchClick="StartMatch"
+            OnContinueMatchClick="ContinueMatch"/>
     }
+
+    @if(currentLeg != null)
+    {
+        <LegDetails Model="@currentLeg" 
+            OnBackClick="GetTournament"/> 
+    }
+
 }
 
 @code {
     private Tournament Tournament { get; set; }
-    private string Date { get; set; }
-    private Player newPlayer;
+    private string TournamentDate { get; set; }
     private IEnumerable<Leg> Legs { get; set; }
     private IEnumerable<Player> Players { get; set; }
+
+    private Player newPlayer;
+    private Leg currentLeg;
     private string message;
 
     protected override async Task OnInitializedAsync()
     {
         #if DEBUG
-    await Task.Delay(2000);
+    //await Task.Delay(2000);
         #endif
         await GetTournament();
     }
@@ -58,14 +77,20 @@ else
     public async Task GetTournament()
     {
         this.newPlayer = null;
+        this.currentLeg = null;
 
-        Tournament = await service.GetByIdAsync(100);
+        try
+        {
+            Tournament = await tournamentService.GetByIdAsync(100);
 
-        Date = Tournament.Date.ToString("dd/MM/yyyy");
+            Players = Tournament.Players;
 
-        Players = Tournament.Players;
-
-        Legs = Tournament.Legs;
+            Legs = Tournament.Legs;
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 
     public void AddPlayer()
@@ -75,15 +100,22 @@ else
 
     public async Task AddPlayerToTournament(Player player)
     {
-        player.TournamentId = this.Tournament.Id;
-        await service.AddPlayerToTournament(player);
-        
-        this.message = $"{player.Name} werd toegevoegd aan het toernooi.";
-        
-        player.Name = null;
-        StateHasChanged();
+        try
+        {
+            player.TournamentId = this.Tournament.Id;
+            await tournamentService.AddPlayerToTournament(player);
 
-        await ClearMessages();
+            this.message = $"{player.Name} werd toegevoegd aan het toernooi.";
+
+            this.newPlayer = new Player();
+            StateHasChanged();
+
+            await ClearMessages();
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 
     private async Task ClearMessages()
@@ -94,9 +126,49 @@ else
 
     public async Task StartTournament()
     {
-        var id = Tournament.Id;
-        await service.StartTournament(id);
+        try
+        {
+            var id = Tournament.Id;
+            await tournamentService.StartTournament(id);
 
-        await GetTournament();
+            await GetTournament();
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task StartMatch(Leg leg)
+    {
+        try
+        {
+            this.currentLeg = await legService.StartMatch(leg.Id);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task ContinueMatch(Leg leg)
+    {
+        try
+        {
+            this.currentLeg = await legService.GetByIdAsync(leg.Id);
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task AddThrow(string type, int number, long playerId)
+    {
+        var entity = new Throw();
+
+        entity.Type = type;
+        entity.Number = number;
+
     }
 }
