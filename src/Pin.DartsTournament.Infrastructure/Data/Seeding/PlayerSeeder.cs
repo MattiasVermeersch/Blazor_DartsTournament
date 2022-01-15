@@ -36,18 +36,6 @@ namespace Pin.DartsTournament.Infrastructure.Data.Seeding
                     Id = 4,
                     Name = "Mr. Anderson",
                     TournamentId = 100
-                },
-                new Player
-                {
-                    Id = 5,
-                    Name = "Pablo Picasso",
-                    TournamentId = 100
-                },
-                new Player
-                {
-                    Id = 6,
-                    Name = "Johan Vermeer",
-                    TournamentId = 100
                 }
             );
         }
