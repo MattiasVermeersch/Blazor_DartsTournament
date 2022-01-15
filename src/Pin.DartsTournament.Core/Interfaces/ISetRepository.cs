@@ -9,5 +9,6 @@ namespace Pin.DartsTournament.Core.Interfaces
 {
     public interface ISetRepository : IBaseRepository<Set>
     {
+        Task<IEnumerable<Set>> GetPlayerSetsFromLeg(long? legId, Player player);
     }
 }

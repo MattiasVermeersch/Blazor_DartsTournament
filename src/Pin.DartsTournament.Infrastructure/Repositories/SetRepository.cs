@@ -20,7 +20,8 @@ namespace Pin.DartsTournament.Infrastructure.Services
         {
             return _table.AsNoTracking()
                 .Include(l => l.Throws)
-                .Include(l => l.Leg);
+                .Include(l => l.Leg)
+                .Include(l => l.Player);
         }
 
         public override async Task<Set> GetByIdAsync(long? id)
@@ -46,6 +47,14 @@ namespace Pin.DartsTournament.Infrastructure.Services
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public async Task<IEnumerable<Set>> GetPlayerSetsFromLeg(long? legId, Player player)
+        {
+            return await GetAllAsync()
+                .Where(s => s.LegId.Equals(legId))
+                .Where(s => s.PlayerId.Equals(player.Id))
+                .ToListAsync();
         }
     }
 }
