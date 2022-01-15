@@ -1,9 +1,16 @@
 ﻿ <div class=img-container>
-    <img src="@ImageSrc" class=img-banner>
-    <div class=centered>
-        <p class="banner-text">@Model.Name</p>
-        <br />
-        <p class="banner-text">@Date</p>
+    <img src="@ImageSrc" class="img-banner">
+    <div class="centered">
+        @if (!Model.IsActive)
+        {
+            <p class="banner-text">@Model.Name</p>
+            <br />
+            <p class="banner-text">@Model.Date.ToString("dd/MM/yyyy")</p>
+        }
+        else
+        {
+            <p class="banner-text display-1">@Model.Name</p>
+        }
     </div>
 </div>
 <br />
@@ -14,17 +21,4 @@
 
     [Parameter]
     public string ImageSrc { get; set; }
-
-    private string Date { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await FormatDate();
-    }
-
-    private async Task FormatDate()
-    {
-        Date = Model.Date.ToString("dd/MM/yyyy");
-        await Task.Delay(0);
-    }
 }
