@@ -1,4 +1,5 @@
 ﻿using Pin.DartsTournament.Blazor.Interfaces;
+using Pin.DartsTournament.Blazor.Models;
 using Pin.DartsTournament.Core.Entities;
 using Pin.DartsTournament.Core.Interfaces;
 
@@ -102,6 +103,49 @@ namespace Pin.DartsTournament.Blazor.Services
 
 
             await _legRepository.UpdateAsync(leg);
+        }
+
+        public async Task<ICollection<SetModel>> GetSetsFromPlayer(Player player, long? legId)
+        {
+            var sets = await _setRepository.GetPlayerSetsFromLeg(legId, player);
+            var setModelList = new List<SetModel>();
+
+            foreach(var set in sets)
+            {
+                var setModel = new SetModel();
+                var thrownTypes = "";
+
+                setModel.Score = set.Score;
+
+                foreach(var thrown in set.Throws)
+                {
+                    if(thrown != set.Throws.Last())
+                    {
+                        thrownTypes += $"{thrown.Type} / ";
+                    }
+                    else
+                    {
+                        thrownTypes += $"{thrown.Type}";
+                    }
+                }
+
+                setModel.ThrowTypes = thrownTypes;
+                setModelList.Add(setModel);
+            }
+
+            return setModelList;
+        }
+
+        public async Task ResolveLeg(long? playerId, Leg leg)
+        {
+            var updatedLeg = await _legRepository.GetByIdAsync(leg.Id);
+
+            updatedLeg.IsPlayed = true;
+            updatedLeg.WinnerId = playerId;
+            updatedLeg.CurrentlyPlayingId = null;
+            updatedLeg.IsActive = false;
+
+            await _legRepository.UpdateAsync(updatedLeg);
         }
     }
 }
