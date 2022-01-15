@@ -28,7 +28,8 @@ services.AddScoped<ILegRepository, LegRepository>();
 services.AddScoped<ISetRepository, SetRepository>();
 services.AddScoped<IThrowRepository, ThrowRepository>();
 
-services.AddScoped<ITournamentService, TournamentService>();
+services.AddTransient<ITournamentService, TournamentService>();
+services.AddTransient<ILegService, LegService>();
 
 var app = builder.Build();
 
