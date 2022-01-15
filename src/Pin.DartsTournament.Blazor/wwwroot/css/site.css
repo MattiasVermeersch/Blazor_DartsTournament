@@ -135,6 +135,10 @@ a, .btn-link {
     overflow: auto;
 }
 
+.bg-gradient-card {
+    background: linear-gradient(white, cyan);
+    color: black;
+}
 
 .button-link {
     background: none !important;
@@ -146,4 +150,207 @@ a, .btn-link {
     color: #069;
     text-decoration: underline;
     cursor: pointer;
+}
+
+.active-player {
+    color: black;
+    font-weight: bolder;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 5px green
+}
+
+/*CSS STYLE FOR DARTSBOARD*/
+    .circle {
+        position: relative;
+        border: 5px solid black;
+        padding: 0;
+        margin: 1em auto;
+        width: 20em;
+        height: 20em;
+        border-radius: 50%;
+        list-style: none;
+        overflow: hidden;
+        box-shadow: 15px 15px 15px 5px darkgray;
+    }
+
+    .slice {
+        overflow: hidden;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 50%;
+        transform-origin: 0% 100%;
+    }
+
+    .text {
+        position: absolute;
+        left: -100%;
+        width: 200%;
+        height: 200%;
+        text-align: center;
+        -webkit-transform: skewY(72deg) rotate(9deg);
+        -ms-transform: skewY(72deg) rotate(9deg);
+        transform: skewY(72deg) rotate(9deg);
+        padding-top: 0px;
+    }
+
+    .slice:first-child {
+        -webkit-transform: rotate(-9deg) skewY(-72deg);
+        -ms-transform: rotate(-9deg) skewY(-72deg);
+        transform: rotate(-9deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(2) {
+        -webkit-transform: rotate(9deg) skewY(-72deg);
+        -ms-transform: rotate(9deg) skewY(-72deg);
+        transform: rotate(9deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(3) {
+        -webkit-transform: rotate(27deg) skewY(-72deg);
+        -ms-transform: rotate(27deg) skewY(-72deg);
+        transform: rotate(27deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(4) {
+        -webkit-transform: rotate(45deg) skewY(-72deg);
+        -ms-transform: rotate(45deg) skewY(-72deg);
+        transform: rotate(45deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(5) {
+        -webkit-transform: rotate(63deg) skewY(-72deg);
+        -ms-transform: rotate(63deg) skewY(-72deg);
+        transform: rotate(63deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(6) {
+        -webkit-transform: rotate(81deg) skewY(-72deg);
+        -ms-transform: rotate(81deg) skewY(-72deg);
+        transform: rotate(81deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(7) {
+        -webkit-transform: rotate(99deg) skewY(-72deg);
+        -ms-transform: rotate(99deg) skewY(-72deg);
+        transform: rotate(99deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(8) {
+        -webkit-transform: rotate(117deg) skewY(-72deg);
+        -ms-transform: rotate(117deg) skewY(-72deg);
+        transform: rotate(117deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(9) {
+        -webkit-transform: rotate(135deg) skewY(-72deg);
+        -ms-transform: rotate(135deg) skewY(-72deg);
+        transform: rotate(135deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(10) {
+        -webkit-transform: rotate(153deg) skewY(-72deg);
+        -ms-transform: rotate(153deg) skewY(-72deg);
+        transform: rotate(153deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(11) {
+        -webkit-transform: rotate(171deg) skewY(-72deg);
+        -ms-transform: rotate(171deg) skewY(-72deg);
+        transform: rotate(171deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(12) {
+        -webkit-transform: rotate(189deg) skewY(-72deg);
+        -ms-transform: rotate(189deg) skewY(-72deg);
+        transform: rotate(189deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(13) {
+        -webkit-transform: rotate(207deg) skewY(-72deg);
+        -ms-transform: rotate(207deg) skewY(-72deg);
+        transform: rotate(207deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(14) {
+        -webkit-transform: rotate(225deg) skewY(-72deg);
+        -ms-transform: rotate(225deg) skewY(-72deg);
+        transform: rotate(225deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(15) {
+        -webkit-transform: rotate(243deg) skewY(-72deg);
+        -ms-transform: rotate(243deg) skewY(-72deg);
+        transform: rotate(243deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(16) {
+        -webkit-transform: rotate(261deg) skewY(-72deg);
+        -ms-transform: rotate(261deg) skewY(-72deg);
+        transform: rotate(261deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(17) {
+        -webkit-transform: rotate(279deg) skewY(-72deg);
+        -ms-transform: rotate(279deg) skewY(-72deg);
+        transform: rotate(279deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(18) {
+        -webkit-transform: rotate(297deg) skewY(-72deg);
+        -ms-transform: rotate(297deg) skewY(-72deg);
+        transform: rotate(297deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(19) {
+        -webkit-transform: rotate(315deg) skewY(-72deg);
+        -ms-transform: rotate(315deg) skewY(-72deg);
+        transform: rotate(315deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(20) {
+        -webkit-transform: rotate(333deg) skewY(-72deg);
+        -ms-transform: rotate(333deg) skewY(-72deg);
+        transform: rotate(333deg) skewY(-72deg);
+    }
+
+    .slice:nth-child(even) .text {
+        background: beige;
+        color: black;
+    }
+
+    .slice:nth-child(odd) .text {
+        background: black;
+        color: beige;
+    }
+
+    .slice:nth-child(even) .text:hover {
+        background: green;
+        color: white;
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+    .slice:nth-child(odd) .text:hover {
+        background: red;
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+.bgground-legdetails {
+    background-size: cover;
+    /*opacity: 0.1;*/
+}
+
+.bgground-legdetails::after{
+    content: "";
+    background: url(../images/darts_banner.jpg);
+    opacity: 0.1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    z-index: -1;
 }
