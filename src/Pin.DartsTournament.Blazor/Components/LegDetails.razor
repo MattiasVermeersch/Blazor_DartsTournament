@@ -6,7 +6,15 @@
             <button class="btn btn-primary" @onclick="OnBackClick">&laquo;</button>
         </div>
         <div class="col-10">
-            <h3 class="display-4 text-center">Match Details</h3>
+            @if(Model.WinnerId != null)
+            {
+                <h3 class="display-4 text-center">Eindstand</h3>
+            }
+            else
+            {
+                <h3 class="display-4 text-center">Match</h3>
+            }
+            
         </div>
     </div>
     <br />
@@ -78,7 +86,7 @@
                     {
                         <h4 class="text-center">0</h4>
                     }
-                    @if(Throws.Count() == 3)
+                    @if(Throws.Count() == 3 || (Model.ScorePlayer1 == 0 || Model.ScorePlayer2 == 0))
                     {
                         <div class="row">
                             <div class="col-md-12 text-center">
@@ -94,21 +102,25 @@
             <hr />
             <div class="row">
                 <div class="col-md-12">
-                    <hr />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
                     <h3 class="text-center">Worpen</h3>
-                    <ul>
-                        @*@if(Throws.Count() > 0)
-                        {
-                            @foreach(var thrown in Throws)
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            <ul class="list-group">
+                            @foreach(var set in SetsPlayer1)
                             {
-                                <li>@thrown.Number</li>
+                                <li class="list-group-item">@set.Score <br /> (@set.ThrowTypes)</li>
                             }
-                        }*@
-                    </ul>
+                            </ul>
+                        </div> 
+                        <div class="col-md-6 text-center">
+                            <ul class="list-group">
+                            @foreach(var set in SetsPlayer2)
+                            {
+                                <li class="list-group-item">@set.Score <br /> (@set.ThrowTypes)</li>
+                            }
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -144,7 +156,7 @@
             {
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <div class="btn-group d-flex" role="group" aria-label="Toggle Throw Type">
+                        <div class="btn-group d-flex shadow" role="group" aria-label="Toggle Throw Type">
                             <button type="button" class="btn btn-outline-secondary"
                             @onclick="() => SetThrowType('S')">Single</button>
 
@@ -159,7 +171,7 @@
                 <br />
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="btn-group d-flex">
+                        <div class="btn-group d-flex shadow">
                             <button class="btn btn-success"
                             @onclick="() => SetThrowType('O')">Outer Bull</button>
                             <button class="btn btn-danger"
@@ -170,7 +182,7 @@
                 <br />
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="btn-group d-flex">
+                        <div class="btn-group d-flex shadow">
                             <button class="btn btn-outline-dark"
                             @onclick="() => SetThrowType('Z')">Nulworp</button>
                         </div>
@@ -180,20 +192,68 @@
                 <div class="row">
                     <div class="col-md-12">
                         <h3 class="text-center">Huidige worp</h3>
-                        <h4 class="text-center">@Dart@Value</h4>
+                        <h4 class="text-center fw-bolder">@Dart@Value</h4>
                     </div>
                 </div>
                 <br />
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <button class="btn btn-success"
+                        <button class="btn btn-primary shadow"
                             @onclick="SubmitThrow">Registreer worp</button>
-                        <button class="btn btn-danger"
+                        <button class="btn btn-danger shadow"
                             @onclick="ResetSet">Reset</button>
                     </div>
                 </div>
             }
         </div>
+        </div>
+    }
+    else if(Model.WinnerId != null)
+    {
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <h3>@Player1.Name</h3>
+        </div>
+        <div class="col-md-6 text-center">
+            <h3>@Player2.Name</h3>
+        </div>
+    </div> 
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <h3>@Model.ScorePlayer1</h3>
+        </div>
+        <div class="col-md-6 text-center">
+            <h3>@Model.ScorePlayer2</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <ul class="list-group">
+            @foreach(var set in SetsPlayer1)
+            {
+                <li class="list-group-item"><h5>@set.Score <br /> (@set.ThrowTypes)</h5></li>
+            }
+            </ul>
+        </div> 
+        <div class="col-md-6 text-center">
+            <ul class="list-group">
+            @foreach(var set in SetsPlayer2)
+            {
+                <li class="list-group-item"><h5>@set.Score <br /> (@set.ThrowTypes)</h5></li>
+            }
+            </ul>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        @if(Player1.Id == Model.WinnerId)
+        {
+            <h3 class="text-center active-player">@Player1.Name heeft gewonnen!</h3>
+        }
+        @if(Player2.Id == Model.WinnerId)
+        {
+            <h3 class="text-center active-player">@Player2.Name heeft gewonnen!</h3>
+        }
     </div>
     }
     else
@@ -201,13 +261,20 @@
     <div class="row">
         <div class="col-md-12 text-center">
             <h3 class="text-center">Selecteer wie eerst mag beginnen</h3>
-            <div class="btn-group d-flex">
+            <div class="btn-group d-flex shadow">
                 <button class="btn btn-primary btn-lg" @onclick="() => SetPlayerTurn(Player1.Id)">@Player1.Name</button>
                 <button class="btn btn-primary btn-lg" @onclick="() => SetPlayerTurn(Player2.Id)">@Player2.Name</button>
             </div>
         </div>
     </div>
     }
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="row">
+            <p class="alert alert-danger">@error</p>
+        </div>
+    }
+    
 </div>
 
 @code {
@@ -217,28 +284,40 @@
     [Parameter]
     public EventCallback OnBackClick { get; set; }
 
-    private string Dart { get; set; }
-    private int? Value { get; set; }
-    private List<Throw> Throws { get; set; }
-    private int Score { get; set; }
-    private List<string> Worpen { get; set; }
+    private string error = null;
+    private string Dart = null;
+    private int Value = 0;
 
-    private Player Player1 {  get;  set; }
-    private Player Player2 {  get;  set; }
+    private ICollection<Throw> Throws = new List<Throw>();
+    private IEnumerable<SetModel> SetsPlayer1 = new List<SetModel>();
+    private IEnumerable<SetModel> SetsPlayer2 = new List<SetModel>();
+
+    private Player Player1;
+    private Player Player2;
 
     protected override async Task OnInitializedAsync()
     {
         this.Value = 0;
         this.Dart = null;
+        Throws = new List<Throw>();
+        SetsPlayer1 = new List<SetModel>();
+        SetsPlayer2 = new List<SetModel>();
+
         await GetPlayersFromLeg();
+        await GetSetsFromLeg();
     }
 
     private async Task GetPlayersFromLeg()
     {
         Player1 = Model.PlayerLegs.First().Player;
         Player2 = Model.PlayerLegs.Last().Player;
-        Throws = new List<Throw>();
         await Task.Delay(0);
+    }
+
+    private async Task GetSetsFromLeg()
+    {
+        this.SetsPlayer1 = await legService.GetSetsFromPlayer(this.Player1, Model.Id);
+        this.SetsPlayer2 = await legService.GetSetsFromPlayer(this.Player2, Model.Id);
     }
 
     private async Task GetLegById(long id)
@@ -246,7 +325,9 @@
         try
         {
             this.Model = await legService.GetByIdAsync(id);
+            Throws = new List<Throw>();
             await GetPlayersFromLeg();
+            await GetSetsFromLeg();
         }
         catch(Exception ex)
         {
@@ -273,8 +354,8 @@
     {
         if(type == 'B')
         {
-            this.Dart = "Bulls Eye";
-            this.Value = null;
+            this.Dart = "D";
+            this.Value = 25;
         }
         else if(type == 'O')
         {
@@ -283,8 +364,8 @@
         }
         else if(type == 'Z')
         {
-            this.Dart = "0";
-            this.Value = null;
+            this.Dart = "";
+            this.Value = 0;
         }
         else
         {
@@ -303,41 +384,10 @@
         {
             var item = new Throw();
 
-            var type = $"{this.Dart}{this.Value}";
-            var number = 0;
-
-            if (Value == null) number = 0;
-            else number = (int)this.Value;
-            var score = 0;
-
-            switch (this.Dart)
-            {
-                case "S":
-                    score = number * 1;
-                    break;
-                case "D":
-                    score = number * 2;
-                    break;
-                case "T":
-                    score = number * 3;
-                    break;
-                case "Bulls Eye":
-                    score = 50;
-                    break;
-                case "S25":
-                    score = 25;
-                    break;
-                case "0":
-                    score = 0;
-                    break;
-            }
-
-            item.Type = type;
-            item.Number = score;
+            item.Number = await CalculateScore();
+            item.Type = await DetermineType(item.Number);
 
             this.Throws.Add(item);
-
-            await Task.Delay(0);
 
             this.Dart = null;
             this.Value = 0;
@@ -348,17 +398,109 @@
         }
     }
 
-    private void ResetSet()
+    private async Task<string> DetermineType(int score)
     {
-        this.Throws = new List<Throw>();
+        string type = null;
+
+        if(score == 0)
+        {
+            type = "0";
+        }
+        else
+        {
+            type = $"{this.Dart}{this.Value}";
+        }
+
+        if(Model.CurrentlyPlayingId.Equals(Player1.Id))
+        {
+            Model.ScorePlayer1 = Model.ScorePlayer1 - score;
+        }
+        else
+        {
+            Model.ScorePlayer2 = Model.ScorePlayer2 - score;
+        }
+
+        return await Task.FromResult(type);
+    }
+
+    private async Task<int> CalculateScore()
+    {
+        try
+        {
+            var originalScore = 0;
+
+            if(Model.CurrentlyPlayingId.Equals(Player1.Id))
+            {
+                originalScore = Model.ScorePlayer1;
+            }
+            else
+            {
+                originalScore = Model.ScorePlayer2;
+            }
+
+            var score = 0;
+
+            switch (this.Dart)
+            {
+                case "S":
+                    score = this.Value * 1;
+                    break;
+                case "D":
+                    score = this.Value * 2;
+                    break;
+                case "T":
+                    score = this.Value * 3;
+                    break;
+                case "":
+                    score = 0;
+                    break;
+            }
+
+            var newScore = originalScore - score;
+
+            if(newScore < 0)
+            {
+                score = 0;
+                error = "De score moet precies nul zijn om uit te spelen.";
+            }
+            else if(newScore == 0 && !this.Dart.Equals("D"))
+            {
+                error = "Om uit te spelen moet de laatste worp een Double zijn!";
+                score = 0;
+            }
+
+            return score;
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
+    private async Task ResetSet()
+    {
+        await GetLegById(Model.Id);
         this.Dart = null;
         this.Value = 0;
+        this.error = null;
     }
 
     private async Task SubmitSet()
     {
-        await legService.SubmitSet(Throws, Model.Id, Model.CurrentlyPlayingId);
+        try
+        {
+            await legService.SubmitSet(Throws, Model.Id, Model.CurrentlyPlayingId);
 
-        await GetLegById(Model.Id);
+            if(Model.ScorePlayer1 == 0 || Model.ScorePlayer2 == 0)
+            {
+                await legService.ResolveLeg(Model.CurrentlyPlayingId, Model);
+            }
+
+            await GetLegById(Model.Id);
+            this.error = null;
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
     }
 }
