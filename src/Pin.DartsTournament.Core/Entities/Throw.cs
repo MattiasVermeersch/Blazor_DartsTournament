@@ -4,7 +4,7 @@
     {
         public string Type { get; set; }
         public int Number { get; set; }
-        public Set Leg { get; set; }
-        public long? LegId { get; set; }
+        public Set Set { get; set; }
+        public long? SetId { get; set; }
     }
 }
