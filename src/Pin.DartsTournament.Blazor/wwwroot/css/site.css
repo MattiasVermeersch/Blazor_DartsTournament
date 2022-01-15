@@ -136,7 +136,7 @@ a, .btn-link {
 }
 
 .bg-gradient-card {
-    background: linear-gradient(white, cyan);
+    background: linear-gradient(white, lightcyan);
     color: black;
 }
 
@@ -156,7 +156,7 @@ a, .btn-link {
     color: black;
     font-weight: bolder;
     text-transform: uppercase;
-    text-shadow: 2px 2px 5px green
+    text-shadow: 2px 2px 10px green;
 }
 
 /*CSS STYLE FOR DARTSBOARD*/
