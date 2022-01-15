@@ -1,11 +1,11 @@
 ﻿<div class="row">
     @foreach(var leg in LegsList)
     {
-        counter++;
+        Counter++;
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    <center>Match @counter</center>
+            <div class="card h-100 shadow">
+                <div class="card-header bg-gradient-card">
+                    <center>Match @Counter</center>
                 </div>
                 <div class="card-body">
                     <div class="container-fluid">
@@ -32,14 +32,14 @@
                     <div class="d-grid gap-2 col-6 mx-auto">
                         @if (leg.IsActive)
                         {
-                            <button type="button" class="btn btn-outline-primary btn-sm"><span class="oi oi-media-play"> Continue</span></button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(e => OnContinueMatchClick.InvokeAsync(leg))"><span class="oi oi-media-play"> Continue</span></button>
+                            <button type="button" class="btn btn-outline-info btn-sm"><span class="oi oi-eye"> Kijken</span></button>
                         }
                         else
                         {
-                            <button type="button" class="btn btn-outline-primary btn-sm"><span class="oi oi-media-play"> Start match</span></button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(e => OnStartMatchClick.InvokeAsync(leg))"><span class="oi oi-media-play"> Start match</span></button>
+                            <button type="button" class="btn disabled btn-sm"><span class="oi oi-eye"> Kijken</span></button>
                         }
-                        
-                        <button type="button" class="btn btn-outline-info btn-sm"><span class="oi oi-eye"> Kijken</span></button>
                     </div>
                 </div>
             </div>
@@ -51,5 +51,12 @@
     [Parameter]
     public IEnumerable<Leg> LegsList { get; set; }
 
-    private int counter = 0;
+    [Parameter]
+    public EventCallback<Leg> OnStartMatchClick { get; set; }
+
+    [Parameter]
+    public EventCallback<Leg> OnContinueMatchClick { get; set; }
+
+    [Parameter]
+    public int Counter { get; set; }
 }
