@@ -38,7 +38,7 @@ namespace Pin.DartsTournament.Blazor.Services
             return _legRepository.UpdateAsync(entity);
         }
 
-        public Task<bool> DeleteAsync(long id)
+        public Task<bool> DeleteAsync(long? id)
         {
             return _legRepository.DeleteByIdAsync(id);
         }
@@ -146,6 +146,13 @@ namespace Pin.DartsTournament.Blazor.Services
             updatedLeg.IsActive = false;
 
             await _legRepository.UpdateAsync(updatedLeg);
+        }
+
+        public async Task<IEnumerable<Leg>> GetActiveLegs()
+        {
+            var legs = await _legRepository.ListAllAsync();
+
+            return legs.Where(l => l.IsActive);
         }
     }
 }

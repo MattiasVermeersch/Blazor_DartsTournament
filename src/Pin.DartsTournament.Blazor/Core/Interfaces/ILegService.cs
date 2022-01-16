@@ -9,5 +9,6 @@ namespace Pin.DartsTournament.Blazor.Interfaces
         Task SubmitSet(IEnumerable<Throw> thrown, long? legId, long? playerId);
         Task<ICollection<SetModel>> GetSetsFromPlayer(Player player, long? legId);
         Task ResolveLeg(long? playerId, Leg leg);
+        Task<IEnumerable<Leg>> GetActiveLegs();
     }
 }
