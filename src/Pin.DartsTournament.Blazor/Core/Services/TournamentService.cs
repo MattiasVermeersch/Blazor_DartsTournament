@@ -26,7 +26,7 @@ namespace Pin.DartsTournament.Blazor.Services
             return await _tournamentRepository.AddAsync(entity);
         }
 
-        public async Task<bool> DeleteAsync(long id)
+        public async Task<bool> DeleteAsync(long? id)
         {
             return await _tournamentRepository.DeleteByIdAsync(id);
         }
