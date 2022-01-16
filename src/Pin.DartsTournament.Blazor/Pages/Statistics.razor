@@ -1,0 +1,122 @@
+﻿@page "/overview"
+@inject IPlayerService playerService
+@inject ILegService legService
+
+<PageTitle>Klassement</PageTitle>
+
+@if(timeout)
+{
+    <Loading Subject="Klassement" />
+}
+else
+{
+    <h3>Klassement</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table shadow">
+                <caption>Algemeen klassement</caption>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Naam</th>
+                        <th>Win</th>
+                        <th>Verlies</th>
+                        <th>Gemiddelde score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var player in PlayerList)
+                    {
+                        <tr>
+                            <th scope="row">@Counter</th>
+                            <td>@player.PlayerName</td>
+                            <td>@player.Wins</td>
+                            <td>@player.Losses</td>
+                            <td>@player.AverageScore</td>
+                        </tr>
+
+                        Counter++;
+                    }
+                    @{Counter = 1;}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table class="table shadow">
+                <caption>Topprestaties</caption>
+                <thead>
+                    <tr>
+                        <th>Prestatie</th>
+                        <th>Naam</th>
+                        <th>Aantal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Meeste Treble's</th>
+                        <td>@TopTriplePlayer.PlayerName</td>
+                        <td>@TopTriplePlayer.NumberOfTrebles</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Meeste Double's</th>
+                        <td>@TopDoublePlayer.PlayerName</td>
+                        <td>@TopDoublePlayer.NumberOfTrebles</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Meeste 180's</th>
+                        <td>@TopT20Player.PlayerName</td>
+                        <td>@TopT20Player.NumberOfTrebles</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h3>Actieve Legs</h3>
+    @if(Legs.Count() > 0)
+    {
+        <ActiveLegsCards LegsList=@Legs></ActiveLegsCards>
+    }
+    else
+    {
+        <div class="alert alert-info">Er worden op dit moment geen Legs gespeeld.</div>
+    }
+
+}
+
+@code {
+    private bool timeout = true;
+
+    private IEnumerable<PlayerStatisticsModel> PlayerList;
+    private PlayerStatisticsModel TopTriplePlayer;
+    private PlayerStatisticsModel TopDoublePlayer;
+    private PlayerStatisticsModel TopT20Player;
+    private IEnumerable<Leg> Legs;
+
+    private int Counter = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStatistics();
+        await GetActiveLegs();
+        timeout = false;
+    }
+
+    private async Task GetStatistics()
+    {
+        PlayerList = await playerService.GetPlayerStatisticsAsync();
+        TopTriplePlayer = await playerService.GetTopTriplePlayerAsync();
+        TopDoublePlayer = await playerService.GetTopDoublePlayerAsync();
+        TopT20Player = await playerService.GetTopT20PlayerAsync();
+    }
+
+    private async Task GetActiveLegs()
+    {
+        Legs = await legService.GetActiveLegs();
+    }
+
+    private async Task WatchMatch()
+    {
+        
+    }
+}
