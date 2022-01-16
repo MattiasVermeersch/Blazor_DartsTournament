@@ -1,7 +1,6 @@
 ﻿<div class="row">
     @foreach(var leg in LegsList)
     {
-        Counter++;
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow">
                 <div class="card-header bg-gradient-card">
@@ -13,9 +12,18 @@
                         <div class="row">
                             @foreach(var playerGame in leg.PlayerLegs)
                             {
-                                <div class="col-md-6 mb-6">
-                                    <center>@playerGame.Player.Name</center>
-                                </div>
+                                @if(leg.WinnerId == playerGame.PlayerId)
+                                {
+                                    <div class="col-md-6 mb-6 text-center winner">
+                                        @playerGame.Player.Name
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-6 mb-6 text-center">
+                                        @playerGame.Player.Name
+                                    </div>
+                                }
                             }
                         </div>
                         <div><center>vs.</center></div>
@@ -35,6 +43,10 @@
                             <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(e => OnContinueMatchClick.InvokeAsync(leg))"><span class="oi oi-media-play"> Continue</span></button>
                             <button type="button" class="btn btn-outline-info btn-sm"><span class="oi oi-eye"> Kijken</span></button>
                         }
+                        else if (leg.IsPlayed)
+                        {
+                            <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(e => OnContinueMatchClick.InvokeAsync(leg))"><span class="oi oi oi-eye"> Eindresultaat</span></button>
+                        }
                         else
                         {
                             <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(e => OnStartMatchClick.InvokeAsync(leg))"><span class="oi oi-media-play"> Start match</span></button>
@@ -44,7 +56,9 @@
                 </div>
             </div>
         </div>
+        Counter++;
     }
+    @{Counter = 1;};
 </div>
 
 @code {
@@ -57,6 +71,5 @@
     [Parameter]
     public EventCallback<Leg> OnContinueMatchClick { get; set; }
 
-    [Parameter]
-    public int Counter { get; set; }
+    private int Counter = 1;
 }
