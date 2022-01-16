@@ -11,5 +11,7 @@ namespace Pin.DartsTournament.Core.Interfaces
     {
         Task<Player> GetPlayerByName(string name);
         Task<IEnumerable<Player>> GetPlayersByTournamentIdAsync(long? tournamentId);
+        Task ResolveLegForPlayerAsync(long? playerId, bool hasWon);
+        Task<IEnumerable<Player>> GetPlayerStatisticsAsync();
     }
 }
