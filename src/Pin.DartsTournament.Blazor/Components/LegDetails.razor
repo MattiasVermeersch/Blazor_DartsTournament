@@ -1,4 +1,7 @@
-﻿@inject ILegService legService
+﻿@*@page "/match/id"*@
+
+@inject ILegService legService
+@inject IPlayerService playerService
 
 <div class="bgground-legdetails">
     <div class="row">
@@ -423,7 +426,7 @@
         return await Task.FromResult(type);
     }
 
-    private async Task<int> CalculateScore()
+    private Task<int> CalculateScore()
     {
         try
         {
@@ -469,7 +472,7 @@
                 score = 0;
             }
 
-            return score;
+            return Task.FromResult(score);
         }
         catch(Exception ex)
         {
@@ -494,6 +497,8 @@
             if(Model.ScorePlayer1 == 0 || Model.ScorePlayer2 == 0)
             {
                 await legService.ResolveLeg(Model.CurrentlyPlayingId, Model);
+
+                await DeterminePlayerWinsAndLosses(Player1, Player2);
             }
 
             await GetLegById(Model.Id);
@@ -501,6 +506,30 @@
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
+        }
+    }
+    private async Task DeterminePlayerWinsAndLosses(Player player1, Player player2)
+    {
+        try
+        {
+            var playersList = new List<Player> { player1, player2 };
+
+            foreach(var player in playersList)
+            {
+                if(player.Id == Model.CurrentlyPlayingId)
+                {
+                    await playerService.ResolveLegForPlayerAsync(player.Id, true);
+                }
+                else
+                {
+                    await playerService.ResolveLegForPlayerAsync(player.Id, false);
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+
         }
     }
 }
