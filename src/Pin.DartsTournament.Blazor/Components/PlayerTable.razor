@@ -1,16 +1,16 @@
 ﻿<br />
-<div class="inline-div">
-    <table class="table table-info table-striped table-bordered border-info floatLeft">
+<div class="col-md-12 text-center">
+    <table class="table table-striped table-bordered">
         <thead>
-            <tr>
-                <th class="text-center">Players</th>
+            <tr class="table-primary border-primary text-center">
+                <th class="text-center">Spelers</th>
             </tr>
         </thead>
         <tbody>
                 @if(PlayerList == null)
                 {
                     <tr>
-                        <td>There are no players listed in this tournament.</td>
+                        <td>Er zijn nog geen spelers ingeschreven in het toernooi.</td>
                     </tr>
                 }
                 else
@@ -22,8 +22,8 @@
                         </tr>
                     }
                 }
-            <tr>
-                <td><center><button class=button-link @onclick="OnAddClick">Add players</button></center></td>
+            <tr class="table-info border-info">
+                <td><center><button class="button-link" @onclick="OnAddClick">Toevoegen</button></center></td>
             </tr>
         </tbody>
     </table>
