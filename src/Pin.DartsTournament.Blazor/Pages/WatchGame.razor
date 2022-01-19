@@ -1,0 +1,159 @@
+﻿@page "/viewgame/{id}"
+
+@inject ILegService legService
+@inject NavigationManager NavigationManager
+@implements IAsyncDisposable
+
+<PageTitle>Leg</PageTitle>
+@if(!IsLoaded)
+{
+    <Loading Subject="the Leg" />
+}
+else
+{
+    <div class="bgground-legdetails">
+        <div class="row">
+        <div class="col-2">
+            <button class="btn btn-primary" @onclick="OnBack">&laquo; Back</button>
+        </div>
+        <div class="col-10">
+            @if(Model.WinnerId != null)
+            {
+                <h3 class="display-4 text-center">Eindstand</h3>
+            }
+            else
+            {
+                <h3 class="display-4 text-center">Match</h3>
+            }
+            
+        </div>
+    </div>
+    <br />
+        <div class="row">
+            <div class="col-md-6 text-center">
+                <h3 class="@(Model.CurrentlyPlayingId.Equals(Player1.Id) ? "active-player" : "")">@Player1.Name</h3>
+                <br /> 
+                <h3>@Model.ScorePlayer1</h3>
+            </div>
+            <div class="col-md-6 text-center">
+                <h3 class="@(Model.CurrentlyPlayingId.Equals(Player2.Id) ? "active-player" : "")">@Player2.Name</h3>
+                <br /> 
+                <h3>@Model.ScorePlayer2</h3>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h4>Worpen</h4>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-6 text-center">
+                <ul class="list-group">
+                @foreach(var set in SetsPlayer1)
+                {
+                    <li class="list-group-item"><h5>@set.Score <br /> (@set.ThrowTypes)</h5></li>
+                }
+                </ul>
+            </div> 
+            <div class="col-md-6 text-center">
+                <ul class="list-group">
+                @foreach(var set in SetsPlayer2)
+                {
+                    <li class="list-group-item"><h5>@set.Score <br /> (@set.ThrowTypes)</h5></li>
+                }
+                </ul>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            @if(Player1.Id == Model.WinnerId)
+            {
+                <h3 class="text-center active-player">@Player1.Name heeft gewonnen!</h3>
+            }
+            @if(Player2.Id == Model.WinnerId)
+            {
+                <h3 class="text-center active-player">@Player2.Name heeft gewonnen!</h3>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private bool IsLoaded = false;
+
+    private Leg Model = new Leg();
+    private Player Player1 = new Player();
+    private Player Player2 = new Player();
+    private IEnumerable<SetModel> SetsPlayer1 = new List<SetModel>();
+    private IEnumerable<SetModel> SetsPlayer2 = new List<SetModel>();
+
+    private HubConnection hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var id = (long)Convert.ToDouble(Id);
+        await GetLegById(id);
+        await SetHubConnection();
+        IsLoaded = true;
+    }
+
+    private void GetPlayersFromLeg()
+    {
+        Player1 = Model.PlayerLegs.First().Player;
+        Player2 = Model.PlayerLegs.Last().Player;
+    }
+
+    private async Task GetSetsFromLeg()
+    {
+        SetsPlayer1 = await legService.GetSetsFromPlayer(this.Player1, Model.Id);
+        SetsPlayer2 = await legService.GetSetsFromPlayer(this.Player2, Model.Id);
+    }
+
+    private async Task GetLegById(long? id)
+    {
+        try
+        {
+            Model = await legService.GetByIdAsync(id);
+            GetPlayersFromLeg();
+            await GetSetsFromLeg();
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
+    private void OnBack()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private async Task SetHubConnection()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri(BlazorConstants.HubPath))
+            .Build();
+
+        hubConnection.On("GetLegData", async () =>
+        {
+            var id = (long)Convert.ToDouble(Id);
+            await GetLegById(id);
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if(hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    } 
+}
