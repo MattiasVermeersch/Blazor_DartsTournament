@@ -1,6 +1,9 @@
 ﻿@page "/overview"
 @inject IPlayerService playerService
 @inject ILegService legService
+@inject ITournamentService tournamentService
+@inject NavigationManager NavigationManager 
+@implements IAsyncDisposable
 
 <PageTitle>Klassement</PageTitle>
 
@@ -11,94 +14,109 @@
 else
 {
     <h3>Klassement</h3>
-    <div class="row">
-        <div class="col-md-6">
-            <table class="table shadow">
-                <caption>Algemeen klassement</caption>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Naam</th>
-                        <th>Win</th>
-                        <th>Verlies</th>
-                        <th>Gemiddelde score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach(var player in PlayerList)
-                    {
-                        <tr>
-                            <th scope="row">@Counter</th>
-                            <td>@player.PlayerName</td>
-                            <td>@player.Wins</td>
-                            <td>@player.Losses</td>
-                            <td>@player.AverageScore</td>
-                        </tr>
 
-                        Counter++;
-                    }
-                    @{Counter = 1;}
-                </tbody>
-            </table>
-        </div>
-        <div class="col-md-6">
-            <table class="table shadow">
-                <caption>Topprestaties</caption>
-                <thead>
-                    <tr>
-                        <th>Prestatie</th>
-                        <th>Naam</th>
-                        <th>Aantal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">Meeste Treble's</th>
-                        <td>@TopTriplePlayer.PlayerName</td>
-                        <td>@TopTriplePlayer.NumberOfTrebles</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Meeste Double's</th>
-                        <td>@TopDoublePlayer.PlayerName</td>
-                        <td>@TopDoublePlayer.NumberOfTrebles</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Meeste 180's</th>
-                        <td>@TopT20Player.PlayerName</td>
-                        <td>@TopT20Player.NumberOfTrebles</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <h3>Actieve Legs</h3>
-    @if(Legs.Count() > 0)
+    @if (Tournament.IsActive)
     {
-        <ActiveLegsCards LegsList=@Legs></ActiveLegsCards>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table shadow">
+                    <caption>Algemeen klassement</caption>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Naam</th>
+                            <th>Win</th>
+                            <th>Verlies</th>
+                            <th>Gemiddelde <br /> score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var player in PlayerList)
+                        {
+                            <tr>
+                                <th scope="row">@Counter</th>
+                                <td>@player.PlayerName</td>
+                                <td>@player.Wins</td>
+                                <td>@player.Losses</td>
+                                <td>@player.AverageScore</td>
+                            </tr>
+
+                            Counter++;
+                        }
+                        @{Counter = 1;}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table shadow">
+                    <caption>Topprestaties</caption>
+                    <thead>
+                        <tr>
+                            <th>Prestatie</th>
+                            <th>Naam</th>
+                            <th>Aantal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Meeste Treble's</th>
+                            <td>@TopTriplePlayer.PlayerName</td>
+                            <td>@TopTriplePlayer.NumberOfTrebles</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Meeste Double's</th>
+                            <td>@TopDoublePlayer.PlayerName</td>
+                            <td>@TopDoublePlayer.NumberOfDoubles</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Meeste 180's</th>
+                            <td>@TopT20Player.PlayerName</td>
+                            <td>@TopT20Player.TypeCountT20</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h3>Actieve Legs</h3>
+        @if(Legs.Any())
+        {
+            <ActiveLegsCards LegsList=@Legs></ActiveLegsCards>
+        }
+        else
+        {
+            <div class="alert alert-info">Er worden op dit moment geen Legs gespeeld.</div>
+        }
     }
     else
     {
-        <div class="alert alert-info">Er worden op dit moment geen Legs gespeeld.</div>
+        <div class="col-md-12">
+            <p class="alert alert-info">Het toernooi is nog niet gestart.</p>
+        </div>
     }
-
 }
 
 @code {
     private bool timeout = true;
 
+    private Tournament Tournament = new Tournament();
     private IEnumerable<PlayerStatisticsModel> PlayerList;
     private PlayerStatisticsModel TopTriplePlayer;
     private PlayerStatisticsModel TopDoublePlayer;
     private PlayerStatisticsModel TopT20Player;
     private IEnumerable<Leg> Legs;
 
+    private HubConnection hubConnection;
+
     private int Counter = 1;
 
     protected override async Task OnInitializedAsync()
     {
+        Tournament = await tournamentService.GetByIdAsync(100);
+
         await GetStatistics();
-        await GetActiveLegs();
+
+        await SetHubConnection();
         timeout = false;
     }
 
@@ -108,6 +126,7 @@ else
         TopTriplePlayer = await playerService.GetTopTriplePlayerAsync();
         TopDoublePlayer = await playerService.GetTopDoublePlayerAsync();
         TopT20Player = await playerService.GetTopT20PlayerAsync();
+        await GetActiveLegs();
     }
 
     private async Task GetActiveLegs()
@@ -115,8 +134,27 @@ else
         Legs = await legService.GetActiveLegs();
     }
 
-    private async Task WatchMatch()
+    private async Task SetHubConnection()
     {
-        
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri(BlazorConstants.HubPath))
+            .Build();
+
+        hubConnection.On("GetStatistics", async () =>
+        {
+            await GetStatistics();
+            await GetActiveLegs();
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
     }
+
+    public async ValueTask DisposeAsync()
+    {
+        if(hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    } 
 }
