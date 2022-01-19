@@ -43,11 +43,11 @@ namespace Pin.DartsTournament.Blazor.Services
             return _legRepository.DeleteByIdAsync(id);
         }
 
-        public async Task<Leg> StartMatch(long id)
+        public async Task StartMatch(long id)
         {
             var leg = await GetByIdAsync(id);
             leg.IsActive = true;
-            return await _legRepository.UpdateAsync(leg);
+            await _legRepository.UpdateAsync(leg);
         }
 
         public async Task SubmitSet(IEnumerable<Throw> thrown, long? legId, long? playerId)
@@ -152,7 +152,7 @@ namespace Pin.DartsTournament.Blazor.Services
         {
             var legs = await _legRepository.ListAllAsync();
 
-            return legs.Where(l => l.IsActive);
+            return legs.Where(l => l.IsActive && l.CurrentlyPlayingId is not null);
         }
     }
 }
