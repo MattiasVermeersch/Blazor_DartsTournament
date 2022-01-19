@@ -1,4 +1,6 @@
-﻿<div class="row">
+﻿@inject NavigationManager NavigationManager
+
+<div class="row">
     @foreach(var leg in LegsList)
     {
         <div class="col-md-4 mb-4">
@@ -40,17 +42,21 @@
                     <div class="d-grid gap-2 col-6 mx-auto">
                         @if (leg.IsActive)
                         {
-                            <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(e => OnContinueMatchClick.InvokeAsync(leg))"><span class="oi oi-media-play"> Continue</span></button>
-                            <button type="button" class="btn btn-outline-info btn-sm"><span class="oi oi-eye"> Kijken</span></button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(() => NavigateToGame(leg.Id))">
+                                <span class="oi oi-media-play"> Spelen</span>
+                            </button>
                         }
                         else if (leg.IsPlayed)
                         {
-                            <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(e => OnContinueMatchClick.InvokeAsync(leg))"><span class="oi oi oi-eye"> Eindresultaat</span></button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(() => NavigateToGame(leg.Id))">
+                                <span class="oi oi oi-eye"> Eindresultaat</span>
+                            </button>
                         }
                         else
                         {
-                            <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(e => OnStartMatchClick.InvokeAsync(leg))"><span class="oi oi-media-play"> Start match</span></button>
-                            <button type="button" class="btn disabled btn-sm"><span class="oi oi-eye"> Kijken</span></button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(e => OnStartMatchClick.InvokeAsync(leg))">
+                                <span class="oi oi-media-play"> Spelen</span>
+                            </button>
                         }
                     </div>
                 </div>
@@ -68,8 +74,15 @@
     [Parameter]
     public EventCallback<Leg> OnStartMatchClick { get; set; }
 
-    [Parameter]
-    public EventCallback<Leg> OnContinueMatchClick { get; set; }
-
     private int Counter = 1;
+
+    private void NavigateToGame(long id)
+    {
+        NavigationManager.NavigateTo($"/match/{id}");
+    }
+
+    private void NavigateToView(long id)
+    {
+        NavigationManager.NavigateTo($"/viewgame/{id}");
+    }
 }
