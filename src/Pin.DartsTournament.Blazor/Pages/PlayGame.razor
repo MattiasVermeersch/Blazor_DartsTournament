@@ -1,12 +1,20 @@
-﻿@*@page "/match/id"*@
+﻿@page "/match/{id}"
 
 @inject ILegService legService
 @inject IPlayerService playerService
+@inject NavigationManager NavigationManager
+@implements IAsyncDisposable
 
+@if (!IsLoaded)
+{
+    <Loading Subject="Leg" />
+}
+else
+{
 <div class="bgground-legdetails">
     <div class="row">
         <div class="col-1">
-            <button class="btn btn-primary" @onclick="OnBackClick">&laquo;</button>
+            <button class="btn btn-primary" @onclick="OnBack">&laquo;</button>
         </div>
         <div class="col-10">
             @if(Model.WinnerId != null)
@@ -277,37 +285,36 @@
             <p class="alert alert-danger">@error</p>
         </div>
     }
-    
 </div>
+}
 
 @code {
     [Parameter]
-    public Leg Model { get; set; }
+    public string Id { get; set; }
 
-    [Parameter]
-    public EventCallback OnBackClick { get; set; }
+    private bool IsLoaded = false;
 
+    private Leg Model = new Leg();
     private string error = null;
     private string Dart = null;
     private int Value = 0;
+    private Player Player1 = new Player();
+    private Player Player2 = new Player();
 
     private ICollection<Throw> Throws = new List<Throw>();
     private IEnumerable<SetModel> SetsPlayer1 = new List<SetModel>();
     private IEnumerable<SetModel> SetsPlayer2 = new List<SetModel>();
 
-    private Player Player1;
-    private Player Player2;
+    private HubConnection hubConnection;
 
     protected override async Task OnInitializedAsync()
     {
         this.Value = 0;
         this.Dart = null;
-        Throws = new List<Throw>();
-        SetsPlayer1 = new List<SetModel>();
-        SetsPlayer2 = new List<SetModel>();
 
-        await GetPlayersFromLeg();
-        await GetSetsFromLeg();
+        await GetLegById();
+        await SetHubConnection();
+        IsLoaded = true;
     }
 
     private async Task GetPlayersFromLeg()
@@ -323,11 +330,12 @@
         this.SetsPlayer2 = await legService.GetSetsFromPlayer(this.Player2, Model.Id);
     }
 
-    private async Task GetLegById(long id)
+    private async Task GetLegById()
     {
         try
         {
-            this.Model = await legService.GetByIdAsync(id);
+            var id = long.Parse(Id);
+            Model = await legService.GetByIdAsync(id);
             Throws = new List<Throw>();
             await GetPlayersFromLeg();
             await GetSetsFromLeg();
@@ -338,6 +346,11 @@
         }
     }
 
+    private void OnBack()
+    {
+        NavigationManager.NavigateTo("/overview");
+    }
+
     private async Task SetPlayerTurn(long playerId)
     {
         try
@@ -345,7 +358,7 @@
             Model.CurrentlyPlayingId = playerId;
             await legService.UpdateAsync(Model);
 
-            await GetLegById(Model.Id);
+            await GetLegById();
         }
         catch(Exception ex)
         {
@@ -482,7 +495,7 @@
 
     private async Task ResetSet()
     {
-        await GetLegById(Model.Id);
+        await GetLegById();
         this.Dart = null;
         this.Value = 0;
         this.error = null;
@@ -501,7 +514,10 @@
                 await DeterminePlayerWinsAndLosses(Player1, Player2);
             }
 
-            await GetLegById(Model.Id);
+            await SendToStatistics();
+            await SendToWatchLeg();
+            
+            await GetLegById();
             this.error = null;
         }
         catch(Exception ex){
@@ -530,6 +546,39 @@
         {
             throw new Exception(ex.Message);
 
+        }
+    }
+
+    private async Task SetHubConnection()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri(BlazorConstants.HubPath))
+            .Build();
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task SendToStatistics()
+    {
+        if(hubConnection is not null)
+        {
+            await hubConnection.SendAsync("SendResolvedLegData");
+        }
+    }
+
+    private async Task SendToWatchLeg()
+    {
+        if(hubConnection is not null)
+        {
+            await hubConnection.SendAsync("SendLegData");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if(hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
         }
     }
 }
