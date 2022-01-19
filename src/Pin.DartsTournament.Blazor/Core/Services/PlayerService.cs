@@ -59,14 +59,14 @@ namespace Pin.DartsTournament.Blazor.Services
                 int numberOfTrebles = 0;
                 int numberOfDoubles = 0;
 
-                if(setList.Count() > 0)
+                if(setList.Any())
                 {
-                    averageScore = setList.Average(s => s.Score);
+                    averageScore = Math.Round(setList.Average(s => s.Score), 2);
 
                     allT20 = setList.Sum(s => s.Throws.Count(t => t.Type.Equals("T20")));
 
-                    numberOfTrebles = setList.Sum(s => s.Throws.Count(t => t.Type.Contains("T")));
-                    numberOfDoubles = setList.Sum(s => s.Throws.Count(t => t.Type.Contains("D")));
+                    numberOfTrebles = setList.Sum(s => s.Throws.Count(t => t.Type.StartsWith('T')));
+                    numberOfDoubles = setList.Sum(s => s.Throws.Count(t => t.Type.StartsWith('D')));
                 }
                 
 
