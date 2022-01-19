@@ -1,7 +1,8 @@
-﻿<div class="row">
+﻿@inject NavigationManager NavigationManager
+
+<div class="row">
     @foreach(var leg in LegsList)
     {
-        
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow">
                 <div class="card-header bg-gradient-card">
@@ -39,7 +40,7 @@
                     </div>
                     <hr />
                     <div class="d-grid gap-2 col-6 mx-auto">
-                            <button type="button" class="btn btn-outline-info btn-sm"><span class="oi oi-eye"> Kijken</span></button>
+                        <a class="btn alert-info btn-sm" href="" @onclick="(() => NavigateToView(leg.Id))"><span class="oi oi-eye"> Kijken</span></a>
                     </div>
                 </div>
             </div>
@@ -54,4 +55,9 @@
     public IEnumerable<Leg> LegsList { get; set; }
 
     private int Counter = 1;
+
+    private void NavigateToView(long id)
+    {
+        NavigationManager.NavigateTo($"/viewgame/{id}");
+    }
 }
