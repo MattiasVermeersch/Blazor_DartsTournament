@@ -2,6 +2,8 @@
 
 @inject ITournamentService tournamentService
 @inject ILegService legService
+@inject NavigationManager NavigationManager 
+@implements IAsyncDisposable
 
 
 <center><PageTitle>Darts Toernooi</PageTitle></center>
@@ -12,18 +14,24 @@
 }
 else
 {
-    @if(currentLeg == null)
-    {
-        <BannerWithTitle Model="@Tournament" ImageSrc="/images/darts_banner2.jpg" />
-    }
+    <BannerWithTitle Model="@Tournament" ImageSrc="/images/darts_banner2.jpg" />
     
     if(newPlayer == null && !Tournament.IsActive)
     {
-     <div class="col-12 text-center">
-        <button class="btn btn-primary btn-lg" @onclick="StartTournament">Start het toernooi</button>
+     <div class="col-12 text-center d-grid">
+        <button class="btn btn-success btn-lg" @onclick="StartTournament">Start het toernooi</button>
      </div>
-        
-    <PlayerTable PlayerList="@Players" OnAddClick="AddPlayer" />
+
+        @if (Players.Any())
+        {
+            <PlayerTable PlayerList="@Players" OnAddClick="AddPlayer" />
+        }
+        else
+        {
+            <div class="col-md-12 text-center">
+                <p class="alert alert-info">Er zijn nog geen spelers ingeschreven in dit toernooi.</p>
+            </div>
+        }
     }
 
     @if(newPlayer != null)
@@ -40,20 +48,11 @@ else
         }
     }
 
-    @if(Tournament.IsActive && currentLeg == null)
+    @if(Tournament.IsActive)
     {
         <MatchCards LegsList="@Legs"
-            Counter=0
-            OnStartMatchClick="StartMatch"
-            OnContinueMatchClick="ContinueMatch"/>
+            OnStartMatchClick="StartMatch"/>
     }
-
-    @if(currentLeg != null)
-    {
-        <LegDetails Model="@currentLeg" 
-            OnBackClick="GetTournament"/> 
-    }
-
 }
 
 @code {
@@ -63,21 +62,20 @@ else
     private IEnumerable<Player> Players { get; set; }
 
     private Player newPlayer;
-    private Leg currentLeg;
     private string message;
+
+    private HubConnection hubConnection;
 
     protected override async Task OnInitializedAsync()
     {
-        #if DEBUG
-    //await Task.Delay(2000);
-        #endif
+        await SetHubConnection();
+
         await GetTournament();
     }
 
-    public async Task GetTournament()
+    private async Task GetTournament()
     {
         this.newPlayer = null;
-        this.currentLeg = null;
 
         try
         {
@@ -110,6 +108,7 @@ else
             this.newPlayer = new Player();
             StateHasChanged();
 
+            await SendToHub();
             await ClearMessages();
         }
         catch(Exception ex)
@@ -132,6 +131,7 @@ else
             await tournamentService.StartTournament(id);
 
             await GetTournament();
+            await SendToHub();
         }
         catch(Exception ex)
         {
@@ -143,7 +143,8 @@ else
     {
         try
         {
-            this.currentLeg = await legService.StartMatch(leg.Id);
+            await legService.StartMatch(leg.Id);
+            NavigationManager.NavigateTo($"/match/{leg.Id}");
         }
         catch (Exception ex)
         {
@@ -151,24 +152,34 @@ else
         }
     }
 
-    public async Task ContinueMatch(Leg leg)
+    private async Task SetHubConnection()
     {
-        try
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri(BlazorConstants.HubPath))
+            .Build();
+
+        hubConnection.On("GetTournament", async () =>
         {
-            this.currentLeg = await legService.GetByIdAsync(leg.Id);
-        }
-        catch(Exception ex)
+            await GetTournament();
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task SendToHub()
+    {
+        if(hubConnection is not null)
         {
-            throw new Exception(ex.Message);
+            await hubConnection.SendAsync("SendTournament");
         }
     }
 
-    public async Task AddThrow(string type, int number, long playerId)
+    public async ValueTask DisposeAsync()
     {
-        var entity = new Throw();
-
-        entity.Type = type;
-        entity.Number = number;
-
-    }
+        if(hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    } 
 }
