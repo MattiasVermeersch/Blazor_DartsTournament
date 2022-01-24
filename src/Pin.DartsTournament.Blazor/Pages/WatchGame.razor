@@ -84,6 +84,7 @@ else
     [Parameter]
     public string Id { get; set; }
 
+    private long LegId { get; set; }
     private bool IsLoaded = false;
 
     private Leg Model = new Leg();
@@ -96,16 +97,19 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var id = (long)Convert.ToDouble(Id);
-        await GetLegById(id);
+        LegId = (long)Convert.ToDouble(Id);
+        await GetLegById(LegId);
+        
+        await Task.Delay(10);
         await SetHubConnection();
         IsLoaded = true;
     }
 
-    private void GetPlayersFromLeg()
+    private async Task GetPlayersFromLeg()
     {
         Player1 = Model.PlayerLegs.First().Player;
         Player2 = Model.PlayerLegs.Last().Player;
+        await Task.Delay(5);
     }
 
     private async Task GetSetsFromLeg()
@@ -119,7 +123,7 @@ else
         try
         {
             Model = await legService.GetByIdAsync(id);
-            GetPlayersFromLeg();
+            await GetPlayersFromLeg();
             await GetSetsFromLeg();
         }
         catch(Exception ex)
@@ -130,7 +134,7 @@ else
 
     private void OnBack()
     {
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/overview");
     }
 
     private async Task SetHubConnection()
@@ -141,8 +145,7 @@ else
 
         hubConnection.On("GetLegData", async () =>
         {
-            var id = (long)Convert.ToDouble(Id);
-            await GetLegById(id);
+            await GetLegById(LegId);
             StateHasChanged();
         });
 
