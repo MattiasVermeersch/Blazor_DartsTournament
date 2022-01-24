@@ -68,9 +68,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await GetTournament(); 
         await SetHubConnection();
-
-        await GetTournament();
     }
 
     private async Task GetTournament()
@@ -171,7 +170,7 @@ else
     {
         if(hubConnection is not null)
         {
-            await hubConnection.SendAsync("SendTournament");
+            await hubConnection.SendAsync("SendToStatistics");
         }
     }
 
