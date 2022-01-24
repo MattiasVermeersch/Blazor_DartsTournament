@@ -112,8 +112,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Tournament = await tournamentService.GetByIdAsync(100);
-
         await GetStatistics();
 
         await SetHubConnection();
@@ -122,6 +120,7 @@ else
 
     private async Task GetStatistics()
     {
+        Tournament = await tournamentService.GetByIdAsync(100);
         PlayerList = await playerService.GetPlayerStatisticsAsync();
         TopTriplePlayer = await playerService.GetTopTriplePlayerAsync();
         TopDoublePlayer = await playerService.GetTopDoublePlayerAsync();
