@@ -9,7 +9,7 @@ namespace Pin.DartsTournament.Blazor.Hubs
             await Clients.All.SendAsync("GetTournament");
         }
 
-        public async Task SendResolvedLegData()
+        public async Task SendToStatistics()
         {
             await Clients.All.SendAsync("GetStatistics");
         }
