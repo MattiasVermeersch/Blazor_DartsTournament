@@ -14,7 +14,7 @@ else
 <div class="bgground-legdetails">
     <div class="row">
         <div class="col-1">
-            <button class="btn btn-primary" @onclick="OnBack">&laquo;</button>
+            <button class="btn btn-primary" @onclick="OnBack">&laquo; Back</button>
         </div>
         <div class="col-10">
             @if(Model.WinnerId != null)
@@ -358,6 +358,9 @@ else
             Model.CurrentlyPlayingId = playerId;
             await legService.UpdateAsync(Model);
 
+            await SendToStatistics();
+            await SendToWatchLeg();
+
             await GetLegById();
         }
         catch(Exception ex)
@@ -562,7 +565,7 @@ else
     {
         if(hubConnection is not null)
         {
-            await hubConnection.SendAsync("SendResolvedLegData");
+            await hubConnection.SendAsync("SendToStatistics");
         }
     }
 
